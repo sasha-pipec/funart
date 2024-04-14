@@ -1,12 +1,12 @@
 import json
-
 from django import forms
+from django.contrib.postgres.search import TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Q
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Theme, Coloring, Category
+from models_app.models import Theme
 
 
 class SearchServices(ServiceWithResult):
@@ -37,12 +37,11 @@ class SearchServices(ServiceWithResult):
 
     @property
     def _search(self):
-        coloring = Coloring.objects.filter(
-            name__icontains=self.cleaned_data["search"]
-        ).values_list("theme", flat=True)
-        theme = Theme.objects.filter(
-            Q(name__icontains=self.cleaned_data["search"]) |
-            Q(description__icontains=self.cleaned_data["search"])|
-            Q(id__in=coloring)
-        )
-        return theme
+        themes = Theme.objects.annotate(
+            similarity_name=TrigramSimilarity("name", self.cleaned_data["search"]),
+            similarity_description=TrigramSimilarity("description", self.cleaned_data["search"]),
+        ).filter(
+            Q(similarity_name__gt=0.3) |
+            Q(similarity_description__gt=0.2)
+        ).order_by("-similarity_name", "-similarity_description")
+        return themes
