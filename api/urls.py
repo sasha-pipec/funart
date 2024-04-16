@@ -3,6 +3,7 @@ from django.urls import path
 from api.views.theme import ThemeListCreateView, ThemeListByCategoryView, ThemeListBySearchView, ThemePopularListView
 from api.views.category import CategoryListView
 from api.views.coloring import ColoringListCreateView, ColoringDetailView, ColoringDownloadView, ColoringAllDetailView
+from api.views.user import CreateUserView
 
 urlpatterns = [
     # Category
@@ -21,5 +22,8 @@ urlpatterns = [
 
     # Search
     path('search/', ThemeListBySearchView.as_view()),
+
+    # User
+    path('users/', CreateUserView.as_view()),
 
 ]
