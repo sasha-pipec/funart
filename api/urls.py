@@ -3,6 +3,7 @@ from django.urls import path
 from api.views.theme import ThemeListCreateView, ThemeListByCategoryView, ThemeListBySearchView, ThemePopularListView
 from api.views.category import CategoryListView
 from api.views.coloring import ColoringListCreateView, ColoringDetailView, ColoringDownloadView, ColoringAllDetailView
+from api.views.token import GetTockenView
 from api.views.user import CreateUserView
 
 urlpatterns = [
@@ -25,5 +26,8 @@ urlpatterns = [
 
     # User
     path('users/', CreateUserView.as_view()),
+
+    # Token
+    path('users/auth/', GetTockenView.as_view()),
 
 ]
