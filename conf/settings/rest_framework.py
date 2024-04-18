@@ -9,5 +9,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "PAGE_SIZE": env("PAGE_SIZE", default=8, cast=int),
     "EXCEPTION_HANDLER": "utils.exception_handler.custom_exception_handler",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 
 }

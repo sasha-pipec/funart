@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.authtoken.models import Token
 
@@ -20,6 +21,7 @@ class GetTokenSerializers(serializers.Serializer):
         token_obj = Token.objects.filter(user=obj)
         if token_obj.exists():
             return token_obj.first().key
+        return Token.objects.create(user=obj).key
 
     @staticmethod
     def check_password(obj, password):
@@ -29,3 +31,14 @@ class GetTokenSerializers(serializers.Serializer):
     @staticmethod
     def get_user(username):
         return get_object_or_404(User, username=username)
+
+
+
+class DeleteTokenSerialuzers(serializers.Serializer):
+
+    def validate(self, attrs):
+        obj_token = Token.objects.filter(user=self.context['user'])
+        if not obj_token.exists():
+            raise ValidationError('The user is not logged in')
+        attrs['obj_token'] = obj_token.first()
+        return attrs
