@@ -1,5 +1,8 @@
 from django.urls import path
 
+from api.views.dislike import DelLikeView
+from api.views.favourite import FavouriteView
+from api.views.like import AddLikeView
 from api.views.theme import ThemeListCreateView, ThemeListByCategoryView, ThemeListBySearchView, ThemePopularListView
 from api.views.category import CategoryListView
 from api.views.coloring import ColoringListCreateView, ColoringDetailView, ColoringDownloadView, ColoringAllDetailView
@@ -31,4 +34,10 @@ urlpatterns = [
     path('users/auth/', GetTockenView.as_view()),
     path('users/logout/', LogoutTockenView.as_view()),
 
+    # Like
+    path('themes/<int:id>/likes/', AddLikeView.as_view()),
+    path('themes/<int:id>/dislikes/', DelLikeView.as_view()),
+
+    # Favourite
+    path('themes/<int:id>/favourites/', FavouriteView.as_view()),
 ]
