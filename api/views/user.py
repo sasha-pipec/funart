@@ -2,17 +2,18 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
+from service_objects.services import ServiceOutcome
 
-from api.serializers.user.create import CreateUserSerializzer
+from api.services.user.create import UserCreateServices
 
 
 class CreateUserView(APIView):
+
     def post(self, request):
         try:
-            serializers = CreateUserSerializzer(data=request.data)
-            serializers.is_valid(raise_exception=True)
-            Token.objects.create(user=serializers.validated_data['user'])
+            ServiceOutcome(UserCreateServices, request.data)
             return Response(status=status.HTTP_201_CREATED)
         except ValidationError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
