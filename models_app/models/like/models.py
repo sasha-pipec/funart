@@ -2,7 +2,7 @@
 from django.db import models
 
 
-class Like(models.Model):
+class LikeTheme(models.Model):
     theme = models.ForeignKey(to='Theme', on_delete=models.CASCADE,
                               related_name='likes', verbose_name='Тематика')
     user = models.ForeignKey(to='User', on_delete=models.CASCADE,

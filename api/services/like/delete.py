@@ -4,7 +4,7 @@ from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
 
 from models_app.models import User, Theme
-from models_app.models.like.models import Like
+from models_app.models.like.models import LikeTheme
 
 
 class LikeDeleteServices(ServiceWithResult):
@@ -16,7 +16,7 @@ class LikeDeleteServices(ServiceWithResult):
         return self
 
     def like_delete(self):
-        obj_like_search = Like.objects.filter(
+        obj_like_search = LikeTheme.objects.filter(
             theme=self.get_themes(),
             user=self.cleaned_data['user'],
         )
