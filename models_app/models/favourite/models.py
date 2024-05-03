@@ -4,7 +4,7 @@ from django.db import models
 
 class Favourite(models.Model):
     theme = models.ForeignKey(to='Theme', on_delete=models.CASCADE,
-                              related_name='favourites', verbose_name='Тематика')
+                              related_name='themes_favourites', verbose_name='Тематика')
     user = models.ForeignKey(to='User', on_delete=models.CASCADE,
                              related_name='favourites', verbose_name='Пользователь')
 
