@@ -4,7 +4,7 @@ from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
 
 from models_app.models import User, Theme
-from models_app.models.like.models import LikeTheme
+from models_app.models.theme_like.models import LikeTheme
 
 
 class LikeCreateServices(ServiceWithResult):

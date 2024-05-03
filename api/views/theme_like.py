@@ -8,7 +8,7 @@ from api.services.like.create import LikeCreateServices
 from api.services.like.delete import LikeDeleteServices
 
 
-class LikeCreateDeleteView(APIView):
+class ThemesLikeCreateDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, **kwargs):
