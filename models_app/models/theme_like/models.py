@@ -12,7 +12,7 @@ class LikeTheme(models.Model):
         return self.theme.name
 
     class Meta:
-        db_table = 'like'
+        db_table = 'theme_likes'
         app_label = "models_app"
         verbose_name = 'Like'
         verbose_name_plural = 'Likes'
