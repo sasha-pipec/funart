@@ -7,5 +7,3 @@ from service_objects.services import ServiceOutcome
 def zeroing_rating_themes():
     ServiceOutcome(ThemeRatingZeroingService, {})
 
-
-
