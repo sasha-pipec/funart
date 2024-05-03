@@ -8,7 +8,7 @@ from models_app.models.theme_like.models import LikeTheme
 
 
 class LikeCreateServices(ServiceWithResult):
-    id = forms.IntegerField()
+    theme_id = forms.IntegerField()
     user = ModelField(User)
 
     def process(self):
@@ -28,4 +28,4 @@ class LikeCreateServices(ServiceWithResult):
             )
 
     def get_themes(self):
-        return get_object_or_404(Theme, id=self.cleaned_data['id'])
+        return get_object_or_404(Theme, id=self.cleaned_data['theme_id'])   # Todo exists
