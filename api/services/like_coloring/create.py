@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from django import forms
 from rest_framework.generics import get_object_or_404
 from service_objects.fields import ModelField
@@ -10,20 +12,27 @@ class ColoringLikeCreateServices(ServiceWithResult):
     user = ModelField(User)
 
     def process(self):
+        self.get_coloring()
+        self.like_search()
         self.like_create()
         return self
 
-    def like_create(self):
+    @lru_cache
+    def get_coloring(self):
+        return get_object_or_404(Coloring, id=self.cleaned_data['id'])
+
+    def like_search(self):
         obj_like_search = LikeColoring.objects.filter(
-            coloring=self.get_themes(),
+            coloring=self.get_coloring(),
             user=self.cleaned_data['user'],
         )
-        if not obj_like_search.exists():
-            LikeColoring.objects.create(
-                coloring=self.get_themes(),
-                user=self.cleaned_data['user'],
+        if obj_like_search.exists():
+            raise Exception('The like already exists')
 
-            )
+    def like_create(self):
+        LikeColoring.objects.create(
+            coloring=self.get_coloring(),
+            user=self.cleaned_data['user'],
+        )
 
-    def get_themes(self):
-        return get_object_or_404(Coloring, id=self.cleaned_data['id'])
+

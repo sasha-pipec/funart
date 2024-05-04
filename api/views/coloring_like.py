@@ -16,7 +16,10 @@ class ColoringLikeCreateDeleteView(APIView):
             'id': kwargs['id'],
             'user': request.user
         })
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(
+            {'coloring_id': kwargs['id']},
+            status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, **kwargs):
         ServiceOutcome(ColoringLikeDeleteServices, {

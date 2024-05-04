@@ -14,5 +14,5 @@ class LikeColoring(models.Model):
     class Meta:
         db_table = 'coloring_likes'
         app_label = "models_app"
-        verbose_name = 'Like_Coloring'
-        verbose_name_plural = 'Likes_Colorings'
+        verbose_name = 'Like coloring'
+        verbose_name_plural = 'Likes colorings'

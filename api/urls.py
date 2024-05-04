@@ -4,7 +4,6 @@ from api.views.category import CategoryListView
 from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
 from api.views.coloring_like import ColoringLikeCreateDeleteView
-from api.views.favourite import FavouriteCreateDeleteView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
                              ThemeListBySearchView, ThemePopularListView)
@@ -41,10 +40,5 @@ urlpatterns = [
     # Like_coloring
     path('colorings/<int:id>/likes/', ColoringLikeCreateDeleteView.as_view()),
 
-    # Favourite
-    path('themes/<int:id>/favourites/', FavouriteCreateDeleteView.as_view()),
 
 ]
-
-#https://habr.com/ru/sandbox/179864/
-#https://github.com/tporadowski/redis/releases
