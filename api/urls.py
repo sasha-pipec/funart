@@ -3,8 +3,8 @@ from django.urls import path
 from api.views.category import CategoryListView
 from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
-from api.views.favourite import FavouriteCreateDeleteView
-from api.views.like import LikeCreateDeleteView
+from api.views.coloring_like import ColoringLikeCreateDeleteView
+from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
                              ThemeListBySearchView, ThemePopularListView)
 from api.views.token import TokenGetDeleteView
@@ -34,11 +34,11 @@ urlpatterns = [
     # Token
     path('users/auth/', TokenGetDeleteView.as_view()),
 
-    # Like
-    path('themes/<int:id>/likes/', LikeCreateDeleteView.as_view()),
+    # Like_themes
+    path('themes/<int:id>/likes/', ThemeLikeCreateDeleteView.as_view()),
 
-    # Favourite
-    path('themes/<int:id>/favourites/', FavouriteCreateDeleteView.as_view()),
+    # Like_coloring
+    path('colorings/<int:id>/likes/', ColoringLikeCreateDeleteView.as_view()),
 
 
 ]

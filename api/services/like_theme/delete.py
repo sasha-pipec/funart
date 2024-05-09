@@ -2,25 +2,26 @@ from django import forms
 from rest_framework.generics import get_object_or_404
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
+
 from models_app.models import User, Theme
-from models_app.models.favourite.models import Favourite
+from models_app.models.theme_like.models import LikeTheme
 
 
-class FavouriteDeleteServices(ServiceWithResult):
+class LikeDeleteServices(ServiceWithResult):
     id = forms.IntegerField()
     user = ModelField(User)
 
     def process(self):
-        self.favourite_delete()
+        self.like_delete()
         return self
 
-    def favourite_delete(self):
-        obj_favourite_search = Favourite.objects.filter(
+    def like_delete(self):
+        obj_like_search = LikeTheme.objects.filter(
             theme=self.get_themes(),
             user=self.cleaned_data['user'],
         )
-        if obj_favourite_search.exists():
-            obj_favourite_search.first().delete()
+        if obj_like_search.exists():
+            obj_like_search.first().delete()
 
     def get_themes(self):
         return get_object_or_404(Theme, id=self.cleaned_data['id'])
