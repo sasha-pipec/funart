@@ -17,6 +17,7 @@ redis = "*"
 django-cors-headers = "*"
 drf-yasg = "*"
 pytils = "*"
+eventlet = "*"
 
 [dev-packages]
 

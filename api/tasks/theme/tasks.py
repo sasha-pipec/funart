@@ -5,5 +5,7 @@ from service_objects.services import ServiceOutcome
 
 @app.task
 def zeroing_rating_themes():
+    print('pppppppppppppppppp')
+
     ServiceOutcome(ThemeRatingZeroingService, {})
 

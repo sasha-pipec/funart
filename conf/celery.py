@@ -16,4 +16,12 @@ app.conf.beat_schedule = {
             hour=0,
         ),
     },
+    'data_search': {
+        'task': 'api.tasks.data_search.tasks.search_new_data',
+        'schedule': crontab(
+            minute=0,
+            hour=0,
+        ),
+    }
+
 }
