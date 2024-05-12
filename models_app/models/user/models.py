@@ -28,11 +28,11 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    def __str__(self):
-        return self.username
-
     class Meta:
         db_table = 'users'
         app_label = "models_app"
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+    def __str__(self):
+        return self.username
