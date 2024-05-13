@@ -1,3 +1,4 @@
+from django.db.models import Count
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
@@ -40,7 +41,7 @@ class ColoringListCreateView(APIView):
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
                 'theme': ThemeListSerializer(
-                    Theme.objects.get(id=kwargs['id'])
+                    Theme.objects.prefetch_related('likes').annotate(likes_count=Count('likes')).get(id=kwargs['id'])
                 ).data,
             },
             status=status.HTTP_200_OK
