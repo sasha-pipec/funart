@@ -11,5 +11,4 @@ class ColoringListSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'image',
-            'type',
         )

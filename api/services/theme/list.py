@@ -11,7 +11,6 @@ from models_app.models import Theme
 class ThemeListServices(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
-    language = forms.CharField()
 
     def process(self):
         self._paginated_themes()
@@ -36,4 +35,4 @@ class ThemeListServices(ServiceWithResult):
 
     @property
     def _themes(self):
-        return Theme.objects.filter(language=self.cleaned_data['language']).order_by("-id")
+        return Theme.objects.all().order_by("-id")

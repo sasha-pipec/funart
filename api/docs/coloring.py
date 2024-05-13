@@ -14,12 +14,12 @@ COLORING_ITEM = {
             ),
             name=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
             image=openapi.Schema(type=openapi.TYPE_STRING, example="/uploads/colorings/index.jpg"),
-            created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
-            updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
-            theme=openapi.Schema(
-                type=openapi.TYPE_ARRAY,
-                **THEME_ITEM
-            ),
+            # created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            # updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            # theme=openapi.Schema(
+            #     type=openapi.TYPE_ARRAY,
+            #     **THEME_ITEM
+            # ),
         ),
     ),
 }
@@ -53,6 +53,7 @@ COLORING_LIST_VIEW = {
                         type=openapi.TYPE_ARRAY,
                         **COLORING_ITEM
                     ),
+                    theme=THEME_ITEM["items"],
                     page_data=openapi.Schema(type=openapi.TYPE_STRING, example='"[\"1\"]"'),
                     page_info=PAGINATOR_INFO,
                 ),
@@ -90,9 +91,9 @@ COLORING_LIST_BY_SEARCH_VIEW = {
             openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties=dict(
-                    colorings=openapi.Schema(
+                    themes=openapi.Schema(
                         type=openapi.TYPE_ARRAY,
-                        **COLORING_ITEM
+                        **THEME_ITEM
                     ),
                     page_data=openapi.Schema(type=openapi.TYPE_STRING, example='"[\"1\"]"'),
                     page_info=PAGINATOR_INFO,
@@ -112,10 +113,7 @@ COLORING_GET_VIEW = {
     "responses": {
         status.HTTP_200_OK: openapi.Response(
             "Success",
-            openapi.Schema(
-                type=openapi.TYPE_ARRAY,
-                **COLORING_ITEM
-            ),
+            COLORING_ITEM["items"]
         )
     },
 }

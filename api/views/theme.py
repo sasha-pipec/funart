@@ -29,7 +29,7 @@ class ThemeListCreateView(APIView):
             status=status.HTTP_200_OK
         )
 
-    @swagger_auto_schema(**THEME_CREATE_VIEW)
+    @swagger_auto_schema(**THEME_CREATE_VIEW, auto_schema=None)
     def post(self, request, *args, **kwargs):
         outcome = ServiceOutcome(ThemeCreateServices, request.data.dict(), {'image': request.data.get('image')})
         return Response(
@@ -71,7 +71,7 @@ class ThemeListBySearchView(APIView):
         outcome = ServiceOutcome(SearchServices, request.GET.dict())
         return Response(
             {
-                "Coloring": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+                "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
             },
