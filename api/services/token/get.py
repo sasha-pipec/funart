@@ -1,31 +1,39 @@
 from django import forms
+from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import get_object_or_404
+from service_objects.errors import ValidationError
 from service_objects.services import ServiceWithResult
 from functools import lru_cache
 from models_app.models import User
 
 
-class TokenGetServices(ServiceWithResult):
-    username = forms.CharField()
+class TokenGetOrCreateServices(ServiceWithResult):
+    email = forms.EmailField()
     password = forms.CharField()
 
     def process(self):
-        self.password_verification()
-        self.result = self.get_token()
+        self.check_password()
+        self.result = self._user_with_token
         return self
 
-    def get_token(self):
-        token_obj = Token.objects.filter(user=self.get_user())
-        if token_obj.exists():
-            return token_obj.first()
-        return Token.objects.create(user=self.get_user())
+    def check_password(self):
+        user = self._user_with_token
+        if not user.check_password(self.cleaned_data['password']):
+            raise ValidationError(
+                message='Invalid password',
+                response_status=status.HTTP_400_BAD_REQUEST
+            )
 
-    def password_verification(self):
-        obj_user = self.get_user()
-        if not obj_user.check_password(self.cleaned_data['password']):
-            raise Exception('Data is not valid')
-
+    @property
     @lru_cache
-    def get_user(self):
-        return get_object_or_404(User, username=self.cleaned_data['username'])
+    def _user_with_token(self):
+        users = User.objects.filter(email=self.cleaned_data['email'])
+        if not users.exists():
+            raise ValidationError(
+                message='User not found',
+                response_status=status.HTTP_404_NOT_FOUND
+            )
+        user = users.first()
+        if not hasattr(user, 'auth_token'):
+            Token.objects.create(user=user)
+        return user
