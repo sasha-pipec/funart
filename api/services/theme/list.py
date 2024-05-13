@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.core.paginator import Paginator
+from django.db.models import Count
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
@@ -35,4 +36,10 @@ class ThemeListServices(ServiceWithResult):
 
     @property
     def _themes(self):
-        return Theme.objects.all().order_by("-id")
+        return (
+            Theme.objects
+            .prefetch_related('likes')
+            .annotate(likes_count=Count('likes'))
+            .all()
+            .order_by("-id")
+        )

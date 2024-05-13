@@ -5,6 +5,7 @@ from api.serializers.category.list import CategoryListSerializer
 
 class ThemeListSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
+    likes_count = serializers.IntegerField()
 
     def get_is_liked(self, obj):
         user = self.context.get("user")
@@ -20,6 +21,7 @@ class ThemeListSerializer(serializers.ModelSerializer):
             'description',
             'image',
             'is_liked',
+            'likes_count',
             'created_at',
             'updated_at'
         )
@@ -27,6 +29,7 @@ class ThemeListSerializer(serializers.ModelSerializer):
 
 class ThemeListPopularSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
+    likes_count = serializers.IntegerField()
 
     def get_is_liked(self, obj):
         user = self.context.get("user")
@@ -41,6 +44,7 @@ class ThemeListPopularSerializer(serializers.ModelSerializer):
             'name',
             'popular_image',
             'is_liked',
+            'likes_count',
             'created_at',
             'updated_at'
         )
