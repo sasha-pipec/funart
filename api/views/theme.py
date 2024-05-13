@@ -11,7 +11,7 @@ from api.services.coloring.search import SearchServices
 from api.services.theme.category.list import ThemeListByCategoryService
 from api.services.theme.create import ThemeCreateServices
 from api.services.theme.list import ThemeListServices
-from api.serializers.theme.list import ThemeListSerializer
+from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
 from api.services.theme.popular import ThemePopularListServices
 
 
@@ -22,7 +22,11 @@ class ThemeListCreateView(APIView):
         outcome = ServiceOutcome(ThemeListServices, request.GET.dict())
         return Response(
             {
-                "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+                "themes": ThemeListSerializer(
+                    outcome.result.get('object_list'),
+                    many=True,
+                    context={"user": request.user}
+                ).data,
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
             },
@@ -45,7 +49,11 @@ class ThemePopularListView(APIView):
         outcome = ServiceOutcome(ThemePopularListServices, request.GET.dict())
         return Response(
             {
-                "themes": ThemeListSerializer(outcome.result, many=True).data,
+                "themes": ThemeListPopularSerializer(
+                    outcome.result,
+                    many=True,
+                    context={"user": request.user}
+                ).data,
             },
             status=status.HTTP_200_OK
         )
