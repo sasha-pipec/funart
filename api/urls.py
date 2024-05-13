@@ -8,7 +8,7 @@ from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
                              ThemeListBySearchView, ThemePopularListView)
 from api.views.token import TokenGetDeleteView
-from api.views.user import CreateUserView
+from api.views.user import CreateUserView, CurrentUserView
 
 urlpatterns = [
     # Category
@@ -30,6 +30,7 @@ urlpatterns = [
 
     # User
     path('users/', CreateUserView.as_view()),
+    path('users/me/', CurrentUserView.as_view()),
 
     # Token
     path('users/auth/', TokenGetDeleteView.as_view()),
