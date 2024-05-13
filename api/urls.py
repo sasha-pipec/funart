@@ -21,7 +21,7 @@ urlpatterns = [
     path('themes/<int:id>/colorings/', ColoringListCreateView.as_view()),
 
     # Coloring
-    path('colorings/', ColoringAllDetailView.as_view()),
+    # path('colorings/', ColoringAllDetailView.as_view()),
     path('colorings/<int:id>/', ColoringDetailView.as_view()),
     path('colorings/<int:id>/download/', ColoringDownloadView.as_view()),
 

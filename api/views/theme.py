@@ -11,7 +11,7 @@ from api.services.coloring.search import SearchServices
 from api.services.theme.category.list import ThemeListByCategoryService
 from api.services.theme.create import ThemeCreateServices
 from api.services.theme.list import ThemeListServices
-from api.serializers.theme.list import ThemeListSerializer
+from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
 from api.services.theme.popular import ThemePopularListServices
 
 
@@ -22,14 +22,18 @@ class ThemeListCreateView(APIView):
         outcome = ServiceOutcome(ThemeListServices, request.GET.dict())
         return Response(
             {
-                "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+                "themes": ThemeListSerializer(
+                    outcome.result.get('object_list'),
+                    many=True,
+                    context={"user": request.user}
+                ).data,
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
             },
             status=status.HTTP_200_OK
         )
 
-    @swagger_auto_schema(**THEME_CREATE_VIEW)
+    @swagger_auto_schema(**THEME_CREATE_VIEW, auto_schema=None)
     def post(self, request, *args, **kwargs):
         outcome = ServiceOutcome(ThemeCreateServices, request.data.dict(), {'image': request.data.get('image')})
         return Response(
@@ -45,7 +49,11 @@ class ThemePopularListView(APIView):
         outcome = ServiceOutcome(ThemePopularListServices, request.GET.dict())
         return Response(
             {
-                "themes": ThemeListSerializer(outcome.result, many=True).data,
+                "themes": ThemeListPopularSerializer(
+                    outcome.result,
+                    many=True,
+                    context={"user": request.user}
+                ).data,
             },
             status=status.HTTP_200_OK
         )
@@ -71,7 +79,7 @@ class ThemeListBySearchView(APIView):
         outcome = ServiceOutcome(SearchServices, request.GET.dict())
         return Response(
             {
-                "Coloring": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+                "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
             },

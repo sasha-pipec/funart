@@ -11,8 +11,8 @@ CATEGORY_ITEM = {
             ),
             name=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
             description=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
-            created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
-            updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            # created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            # updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
         ),
     ),
 }

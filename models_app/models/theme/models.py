@@ -3,17 +3,6 @@ from django.db import models
 
 
 class Theme(models.Model):
-    LANGUAGES = (
-        ('English', 'English'),
-        ('Deutsch', 'Deutsch'),
-        ('Español', 'Español'),
-        ('Português', 'Português'),
-        ('Français', 'Français'),
-        ('Italiano', 'Italiano'),
-        ('Polski', 'Polski'),
-        ('Русский', 'Русский'),
-    )
-
     name = models.CharField(max_length=255, verbose_name='Тематика')
     description = models.TextField(verbose_name='Описание')
     image = models.ImageField(upload_to="themes/", verbose_name="Картинка темы")
@@ -22,7 +11,6 @@ class Theme(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     category = models.ManyToManyField(to='Category', verbose_name='Категория')
-    language = models.CharField(max_length=15, choices=LANGUAGES, verbose_name='Язык', default='English')
 
     class Meta:
         db_table = 'themes'

@@ -46,7 +46,7 @@ class ColoringListCreateView(APIView):
             status=status.HTTP_200_OK
         )
 
-    @swagger_auto_schema(**COLORING_CREATE_VIEW)
+    @swagger_auto_schema(**COLORING_CREATE_VIEW, auto_schema=None)
     def post(self, request, *args, **kwargs):
         outcome = ServiceOutcome(ColoringCreateServices, request.data.dict() | kwargs, {'image': request.data.get('image')})
         return Response(

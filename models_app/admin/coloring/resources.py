@@ -14,12 +14,11 @@ class ThemeFormAdmin(forms.ModelForm):
 
 @admin.register(Coloring)
 class ColoringAdmin(admin.ModelAdmin):
-    list_filter = ("type", "created_at")
+    list_filter = ("created_at",)
     list_display = [
         "id",
         "name",
         "image",
-        "type",
         "created_at",
         "updated_at",
     ]

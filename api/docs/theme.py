@@ -15,13 +15,36 @@ THEME_ITEM = {
             name=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
             description=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
             image=openapi.Schema(type=openapi.TYPE_STRING, example="/uploads/themes/index.jpg"),
-            rating=openapi.Schema(type=openapi.TYPE_STRING, example="6"),
+            # popular_image=openapi.Schema(type=openapi.TYPE_STRING, example="/uploads/themes/index.jpg"),
+            # rating=openapi.Schema(type=openapi.TYPE_STRING, example="6"),
             created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
             updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
-            category=openapi.Schema(
-                type=openapi.TYPE_ARRAY,
-                **CATEGORY_ITEM
+            is_liked=openapi.Schema(type=openapi.TYPE_BOOLEAN, example=False),
+            # category=openapi.Schema(
+            #     type=openapi.TYPE_ARRAY,
+            #     **CATEGORY_ITEM
+            # ),
+        ),
+    ),
+}
+
+
+THEME_ITEM_POPULAR = {
+    "items": openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties=dict(
+            id=openapi.Schema(
+                type=openapi.TYPE_INTEGER, example=1
             ),
+            name=openapi.Schema(type=openapi.TYPE_STRING, example="string"),
+            popular_image=openapi.Schema(type=openapi.TYPE_STRING, example="/uploads/themes/index.jpg"),
+            created_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            updated_at=openapi.Schema(type=openapi.TYPE_STRING, example="2023-02-25T15:15:51.217827+03:00"),
+            is_liked=openapi.Schema(type=openapi.TYPE_BOOLEAN, example=False),
+            # category=openapi.Schema(
+            #     type=openapi.TYPE_ARRAY,
+            #     **CATEGORY_ITEM
+            # ),
         ),
     ),
 }
@@ -54,6 +77,7 @@ THEME_BY_CATEGORY_LIST_VIEW = {
                         type=openapi.TYPE_ARRAY,
                         **THEME_ITEM
                     ),
+                    category=CATEGORY_ITEM["items"],
                     page_data=openapi.Schema(type=openapi.TYPE_STRING, example='"[\"1\"]"'),
                     page_info=PAGINATOR_INFO,
                 ),
@@ -69,7 +93,6 @@ THEME_LIST_VIEW = {
 
         page - номер страницы (по умолчанию 1)
         per_page - сколько элементов на странице (по умолчанию 8)
-        language - язык для фильтрации тематик. Языки: English, Deutsch, Español, Português, Français, Italiano, Polski, Русский
     """,
     'manual_parameters': [
         openapi.Parameter('page', openapi.IN_QUERY,
@@ -80,10 +103,6 @@ THEME_LIST_VIEW = {
                           description="Вы можете выбрать количество тематик на странице",
                           type=openapi.TYPE_NUMBER,
                           required=False),
-        openapi.Parameter('language', openapi.IN_QUERY,
-                          description="Вы можете указать язык, для которого хотите получить тематики",
-                          type=openapi.TYPE_STRING,
-                          required=True),
     ],
     "responses": {
         status.HTTP_200_OK: openapi.Response(
@@ -116,7 +135,7 @@ THEME_POPULAR_LIST_VIEW = {
                 properties=dict(
                     themes=openapi.Schema(
                         type=openapi.TYPE_ARRAY,
-                        **THEME_ITEM
+                        **THEME_ITEM_POPULAR
                     ),
                 ),
             ),
