@@ -1,7 +1,9 @@
 import json
+from functools import lru_cache
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
+from django.db.models import Count
 from service_objects.errors import NotFound
 from service_objects.services import ServiceWithResult
 
@@ -38,6 +40,7 @@ class ThemeListByCategoryService(ServiceWithResult):
         }
 
     @property
+    @lru_cache
     def _category(self):
         try:
             return Category.objects.get(id=self.cleaned_data["id"])
@@ -46,6 +49,11 @@ class ThemeListByCategoryService(ServiceWithResult):
 
     @property
     def _themes(self):
-        category = Category.objects.filter(id=self.cleaned_data["id"])
         if self._category:
-            return Theme.objects.filter(category__in=category).order_by("-updated_at")
+            return (
+                Theme.objects
+                .prefetch_related('likes')
+                .annotate(likes_count=Count('likes'))
+                .filter(category__in=[self._category])
+                .order_by("-updated_at")
+            )
