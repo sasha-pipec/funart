@@ -1,7 +1,7 @@
 from django.urls import path
 
 from api.views.category import CategoryListView
-from api.views.client_theme import ClientThemeListGetView
+from api.views.client_theme_coloring import ClientThemeListGetView, ClientColoringListGetView
 from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
 from api.views.coloring_like import ColoringLikeCreateDeleteView
@@ -23,6 +23,7 @@ urlpatterns = [
 
     # Client
     path('client/<int:id>/themes/', ClientThemeListGetView.as_view()),
+    path('client/<int:id>/coloring/', ClientColoringListGetView.as_view()),
 
     # Coloring
     path('colorings/', ColoringAllDetailView.as_view()),
