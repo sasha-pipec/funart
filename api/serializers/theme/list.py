@@ -23,7 +23,8 @@ class ThemeListSerializer(serializers.ModelSerializer):
             'is_liked',
             'likes_count',
             'created_at',
-            'updated_at'
+            'updated_at',
+            'rating'
         )
 
 
@@ -46,5 +47,6 @@ class ThemeListPopularSerializer(serializers.ModelSerializer):
             'is_liked',
             'likes_count',
             'created_at',
-            'updated_at'
+            'updated_at',
+            'rating'
         )
