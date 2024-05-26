@@ -4,14 +4,8 @@ from api.serializers.category.list import CategoryListSerializer
 
 
 class ThemeListSerializer(serializers.ModelSerializer):
-    is_liked = serializers.SerializerMethodField()
+    is_liked = serializers.BooleanField()
     likes_count = serializers.IntegerField()
-
-    def get_is_liked(self, obj):
-        user = self.context.get("user")
-        if not user or user.is_anonymous:
-            return False
-        return LikeTheme.objects.filter(user=self.context['user'], theme=obj).exists()
 
     class Meta:
         model = Theme
