@@ -3,12 +3,13 @@ from functools import lru_cache
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef, Value
+from rest_framework.exceptions import ValidationError
 from service_objects.errors import NotFound
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Theme, Category
+from models_app.models import Theme, Category, LikeTheme, User
 from django import forms
 
 
@@ -16,6 +17,7 @@ class ThemeListByCategoryService(ServiceWithResult):
     id = forms.IntegerField()
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
+    user_id = forms.IntegerField(required=False)
 
     def process(self):
         self._paginated_themes()
@@ -48,12 +50,23 @@ class ThemeListByCategoryService(ServiceWithResult):
             raise NotFound(message="Такой категории не существует")
 
     @property
+    def _user(self):
+        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
+        if not user_obj.exists():
+            raise ValidationError('The user with such data was not found')
+        return user_obj.first()
+
+    @property
     def _themes(self):
         if self._category:
             return (
                 Theme.objects
                 .prefetch_related('likes')
-                .annotate(likes_count=Count('likes'))
+                .annotate(likes_count=Count('likes'),
+                          is_liked=Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                          if self.cleaned_data['user_id']
+                          else Value(False)
+                          )
                 .filter(category__in=[self._category])
                 .order_by("-updated_at")
             )

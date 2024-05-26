@@ -1,14 +1,15 @@
 import json
 from django import forms
 from django.core.paginator import Paginator
+from django.db.models import Count, F, Value, Case, When, Exists, OuterRef
 from rest_framework.exceptions import ValidationError
 from service_objects.services import ServiceWithResult
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import LikeTheme
+from models_app.models import LikeTheme, Theme
 from models_app.models import User
 
 
-class ClientThemeListServices(ServiceWithResult):
+class PersonalThemeListServices(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     id = forms.IntegerField()
@@ -34,13 +35,21 @@ class ClientThemeListServices(ServiceWithResult):
             'page_range': ",".join([str(p) for p in paginator.page_range]),
         }
 
-    def get_user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['id'])
-        if not user_obj.exists():
-            raise ValidationError('The user with such data was not found')
-        return user_obj.first()
+
 
     @property
     def _themes(self):
-        themes_likes = LikeTheme.objects.select_related('theme').filter(user=self.get_user())
-        return [theme_like.theme for theme_like in themes_likes]
+        like_themes_id = (
+            LikeTheme.objects.filter(user=self.cleaned_data['id']).values_list('theme_id', flat=True)
+        )
+
+        themes = (
+            Theme.objects
+            .annotate(
+                likes_count=Count('likes'),
+                is_liked=Value(True)
+            )
+            .filter(id__in=like_themes_id)
+        )
+
+        return themes
