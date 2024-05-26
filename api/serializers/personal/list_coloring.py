@@ -1,14 +1,12 @@
-from django.db.models import Value
 from rest_framework import serializers
 
-from models_app.models import Coloring
+from models_app.models import LikeColoring, Coloring
 
 
-class ColoringListSerializer(serializers.ModelSerializer):
+class ClientColoringListSerializer(serializers.ModelSerializer):
     is_liked = serializers.BooleanField()
-    likes_count = serializers.IntegerField()
+    count_like = serializers.IntegerField()
     theme = serializers.CharField(source='theme.name')
-
 
     class Meta:
         model = Coloring
@@ -17,6 +15,8 @@ class ColoringListSerializer(serializers.ModelSerializer):
             'name',
             'image',
             'is_liked',
-            'likes_count',
+            'count_like',
+            'created_at',
+            'updated_at',
             'theme'
         )

@@ -1,12 +1,16 @@
 import json
 
+from rest_framework.exceptions import ValidationError
+
+from models_app.models import User
+
 from django import forms
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef, Value
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Theme
+from models_app.models import Theme, LikeTheme
 
 ORDER_BY = {
     ('rating', True): 'rating',
@@ -27,6 +31,7 @@ class ThemeListServices(ServiceWithResult):
     '''
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
+    user_id = forms.IntegerField(required=False)
     order_by = forms.CharField(required=False)
     descending = forms.BooleanField(required=False)
 
@@ -52,6 +57,13 @@ class ThemeListServices(ServiceWithResult):
         }
 
     @property
+    def _user(self):
+        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
+        if not user_obj.exists():
+            raise ValidationError('The user with such data was not found')
+        return user_obj.first()
+
+    @property
     def _themes(self):
         if not self.cleaned_data['order_by']:
             return (
@@ -64,7 +76,14 @@ class ThemeListServices(ServiceWithResult):
         return (
             Theme.objects
             .prefetch_related('likes')
-            .annotate(likes_count=Count('likes'))
+            .annotate(
+                likes_count=Count('likes'),
+                is_liked=(
+                    Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                    if self.cleaned_data['user_id']
+                    else Value(False)
+                )
+            )
             .order_by(
                 ORDER_BY[(self.cleaned_data['order_by'], self.cleaned_data['descending'])]
             )

@@ -1,28 +1,29 @@
-from django.core.paginator import Paginator
-from django.db.models import Count, OuterRef, Exists, Value
-from rest_framework.exceptions import ValidationError
-from service_objects.services import ServiceWithResult
-from django import forms
 import json
 
+from django import forms
+from django.core.paginator import Paginator
+from django.db.models import Count, Value
+from rest_framework.exceptions import ValidationError
+from service_objects.services import ServiceWithResult
+
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Coloring, LikeColoring, User
+from models_app.models import LikeColoring, Coloring
+from models_app.models import User
 
 
-class ColoringAllListServices(ServiceWithResult):
+class PersonalColoringListServices(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
-    user_id = forms.IntegerField(required=False)
+    id = forms.IntegerField()
 
     def process(self):
-        self._paginated_colorings()
-        self.result = self._get_coloring_list
+        self._paginated_themes()
         return self
 
-    def _paginated_colorings(self):
+    def _paginated_themes(self):
         page = self.cleaned_data.get('page') or 1
         paginator = Paginator(
-            self._get_coloring_list,
+            self._colorings,
             self.cleaned_data.get("per_page") or REST_FRAMEWORK["PAGE_SIZE"],
         )
         page_info = {
@@ -36,25 +37,20 @@ class ColoringAllListServices(ServiceWithResult):
             'page_range': ",".join([str(p) for p in paginator.page_range]),
         }
 
-    @property
-    def _user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not user_obj.exists():
-            raise ValidationError('The user with such data was not found')
-        return user_obj.first()
 
     @property
-    def _get_coloring_list(self):
-        return (
+    def _colorings(self):
+        like_coloring_id = (
+            LikeColoring.objects
+            .filter(user=self.cleaned_data['id'])
+            .values_list('coloring_id', flat=True)
+        )
+        colorings = (
             Coloring.objects
             .annotate(
                 likes_count=Count('coloring_likes'),
-                is_liked=(
-                    Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
-                    if self.cleaned_data['user_id']
-                    else Value(False)
-                )
+                is_liked=Value(True)
             )
-            .all()
-            .order_by("-likes_count")
+            .filter(id__in=like_coloring_id)
         )
+        return colorings
