@@ -23,12 +23,6 @@ ORDER_BY = {
 
 
 class ThemeListServices(ServiceWithResult):
-    '''
-    В данный класс в атрибут order_by передаются параметры сортировки (rating, или updated_at, или likes_count),
-    исходя из переданного параметра можно сортировать по рейтингу, либо дате, либо колличеству лайков.
-    В атрибут descending передаются параметры True или False, он указавает как будет сортироваться order_by,
-    True - по возрастанию, False - по убыванию (False стоит по умолчанию)
-    '''
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     user_id = forms.IntegerField(required=False)
@@ -65,26 +59,11 @@ class ThemeListServices(ServiceWithResult):
 
     @property
     def _themes(self):
-        if not self.cleaned_data['order_by']:
-            return (
-                Theme.objects
-                .prefetch_related('likes')
-                .annotate(likes_count=Count('likes'))
-                .order_by("-rating")
+        return Theme.objects.prefetch_related('likes').annotate(
+            likes_count=Count('likes'),
+            is_liked=(
+                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                if self.cleaned_data['user_id']
+                else Value(False)
             )
-
-        return (
-            Theme.objects
-            .prefetch_related('likes')
-            .annotate(
-                likes_count=Count('likes'),
-                is_liked=(
-                    Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
-                    if self.cleaned_data['user_id']
-                    else Value(False)
-                )
-            )
-            .order_by(
-                ORDER_BY[(self.cleaned_data['order_by'], self.cleaned_data['descending'])]
-            )
-        )
+        ).order_by(ORDER_BY[(self.cleaned_data['order_by'], self.cleaned_data['descending'])])

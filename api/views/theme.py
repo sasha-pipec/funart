@@ -45,7 +45,7 @@ class ThemePopularListView(APIView):
 
     @swagger_auto_schema(**THEME_POPULAR_LIST_VIEW)
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(ThemePopularListServices, request.GET.dict())
+        outcome = ServiceOutcome(ThemePopularListServices, request.GET.dict() | {"user_id": request.user.id})
         return Response(
             {
                 "themes": ThemeListPopularSerializer(

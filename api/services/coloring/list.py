@@ -37,33 +37,44 @@ class ColoringListServices(ServiceWithResult):
             'page_info': page_info,
             'object_list': paginator.page(page).object_list,
             'page_range': ",".join([str(p) for p in paginator.page_range]),
+            'theme': self._theme_presence
         }
 
     @property
     def _user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not user_obj.exists():
+        users = User.objects.filter(id=self.cleaned_data['user_id'])
+        if not users.exists():
             raise ValidationError('The user with such data was not found')
-        return user_obj.first()
+        return users.first()
+
+    @property
+    @lru_cache
+    def _theme_presence(self):
+        themes = Theme.objects.prefetch_related('likes').annotate(
+            likes_count=Count('likes'),
+            is_liked=(
+                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                if self.cleaned_data['user_id']
+                else Value(False)
+            )
+        ).filter(id=self.cleaned_data['id'])
+        if not themes.exists():
+            raise ValidationError('The themes with such data was not found')
+        return themes.first()
 
     @property
     def _colorings(self):
-        return (
-            Coloring.objects
-            .annotate(
-                likes_count=Count('coloring_likes'),
-                is_liked=(
-                    Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
-                    if self.cleaned_data['user_id']
-                    else Value(False)
-                )
+        return Coloring.objects.annotate(
+            likes_count=Count('coloring_likes'),
+            is_liked=(
+                Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
+                if self.cleaned_data['user_id']
+                else Value(False)
             )
-            .filter(theme_id=self.cleaned_data["id"])
-            .order_by("-id")
-        )
+        ).filter(theme=self._theme_presence).order_by("-id")
 
     @lru_cache
     def _update_rating(self):
-        theme = Theme.objects.get(id=self.cleaned_data["id"])
+        theme = self._theme_presence
         theme.rating += 1
         theme.save()
