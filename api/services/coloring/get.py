@@ -27,7 +27,7 @@ class ColoringGetServices(ServiceWithResult):
             likes_count=Count('coloring_likes'),
             is_liked=(
                 Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
-                if self.cleaned_data['id']
+                if self.cleaned_data['user_id']
                 else Value(False)
             )
         ).get(id=self.cleaned_data['id'])
