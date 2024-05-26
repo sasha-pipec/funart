@@ -1,7 +1,8 @@
 from django.urls import path
 
 from api.views.category import CategoryListView
-from api.views.client_theme_coloring import ClientThemeListGetView, ClientColoringListGetView
+from api.views.client_theme_coloring import (PersonalThemeListView,
+                                             PersonalColoringListView)
 from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
 from api.views.coloring_like import ColoringLikeCreateDeleteView
@@ -21,14 +22,14 @@ urlpatterns = [
     path('themes/populars/', ThemePopularListView.as_view()),
     path('themes/<int:id>/colorings/', ColoringListCreateView.as_view()),
 
-    # Client
-    path('client/<int:id>/themes/', ClientThemeListGetView.as_view()),
-    path('client/<int:id>/coloring/', ClientColoringListGetView.as_view()),
-
     # Coloring
     path('colorings/', ColoringAllDetailView.as_view()),
     path('colorings/<int:id>/', ColoringDetailView.as_view()),
     path('colorings/<int:id>/download/', ColoringDownloadView.as_view()),
+
+    # Personal
+    path('personal_area/themes/', PersonalThemeListView.as_view()),
+    path('personal_area/colorings/', PersonalColoringListView.as_view()),
 
     # Search
     path('search/', ThemeListBySearchView.as_view()),
@@ -45,6 +46,5 @@ urlpatterns = [
 
     # Like_coloring
     path('colorings/<int:id>/likes/', ColoringLikeCreateDeleteView.as_view()),
-
 
 ]
