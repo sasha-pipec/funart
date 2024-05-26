@@ -66,4 +66,6 @@ class ThemeListServices(ServiceWithResult):
                 if self.cleaned_data['user_id']
                 else Value(False)
             )
-        ).order_by(ORDER_BY[(self.cleaned_data['order_by'], self.cleaned_data['descending'])])
+        ).order_by(
+            ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['descending']), '-rating')
+        )
