@@ -2,11 +2,11 @@ from rest_framework import serializers
 from models_app.models import Theme, LikeTheme
 from api.serializers.category.list import CategoryListSerializer
 
-
+#
 class PersonalThemeListSerializer(serializers.ModelSerializer):
-    count_like = serializers.IntegerField()
-    is_liked = serializers.BooleanField()
-
+#     count_like = serializers.IntegerField()
+#     is_liked = serializers.BooleanField()
+#
     class Meta:
         model = Theme
         fields = (
