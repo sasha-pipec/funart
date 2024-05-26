@@ -19,13 +19,12 @@ class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(ThemeListServices, request.GET.dict())
+        outcome = ServiceOutcome(ThemeListServices, request.GET.dict() | {'user_id': request.user.id})
         return Response(
             {
                 "themes": ThemeListSerializer(
                     outcome.result.get('object_list'),
                     many=True,
-                    context={"user": request.user}
                 ).data,
                 'page_data': outcome.result.get('page_range'),
                 'page_info': outcome.result.get('page_info'),
@@ -63,7 +62,7 @@ class ThemeListByCategoryView(APIView):
 
     @swagger_auto_schema(**THEME_BY_CATEGORY_LIST_VIEW)
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(ThemeListByCategoryService, request.GET.dict() | kwargs)
+        outcome = ServiceOutcome(ThemeListByCategoryService, request.GET.dict() | kwargs | {'user_id': request.user.id})
         return Response({
             'themes': ThemeListSerializer(outcome.result["object_list"], many=True).data,
             'category': CategoryListSerializer(outcome.result["category"]).data,
