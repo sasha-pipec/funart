@@ -17,7 +17,7 @@ class ThemePopularListServices(ServiceWithResult):
         return Theme.objects.prefetch_related('likes').annotate(
             likes_count=Count('likes'),
             is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )

@@ -2,17 +2,18 @@ import json
 from django import forms
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count, Exists, OuterRef, Value
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Theme
+from models_app.models import Theme, LikeTheme
 
 
 class SearchServices(ServiceWithResult):
     search = forms.CharField()
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
+    user_id = forms.IntegerField(required=False)
 
     def process(self):
         self._paginated_search()
@@ -40,6 +41,12 @@ class SearchServices(ServiceWithResult):
         themes = Theme.objects.annotate(
             similarity_name=TrigramSimilarity("name", self.cleaned_data["search"]),
             similarity_description=TrigramSimilarity("description", self.cleaned_data["search"]),
+            likes_count=Count('likes'),
+            is_liked=(
+                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
+                if self.cleaned_data['user_id']
+                else Value(False)
+            )
         ).filter(
             Q(similarity_name__gt=0.3) |
             Q(similarity_description__gt=0.2)

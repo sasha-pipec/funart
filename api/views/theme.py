@@ -75,7 +75,7 @@ class ThemeListBySearchView(APIView):
 
     @swagger_auto_schema(**COLORING_LIST_BY_SEARCH_VIEW)
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(SearchServices, request.GET.dict())
+        outcome = ServiceOutcome(SearchServices, request.GET.dict() | {"user_id": request.user.id})
         return Response(
             {
                 "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
