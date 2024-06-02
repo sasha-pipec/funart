@@ -16,7 +16,7 @@ class ColoringLikeDeleteService(ServiceWithResult):
 
     def like_delete(self):
         likes = LikeColoring.objects.filter(
-            theme=self._coloring,
+            coloring=self._coloring,
             user=self.cleaned_data['user'],
         )
         if likes.exists():
