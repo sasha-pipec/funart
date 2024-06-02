@@ -8,7 +8,7 @@ from api.docs.coloring import (
     COLORING_LIST_VIEW, COLORING_GET_VIEW,
     COLORING_DOWNLOAD_VIEW, COLORING_CREATE_VIEW
 )
-from api.serializers.coloring.list import ColoringListSerializer
+from api.serializers.coloring.list import ColoringListSerializer, ColoringDetailSerializer
 from api.serializers.theme.list import ThemeListSerializer
 from api.services.coloring.all_list import ColoringAllListService
 from api.services.coloring.create import ColoringCreateService
@@ -61,7 +61,4 @@ class ColoringDetailView(APIView):
     @swagger_auto_schema(**COLORING_GET_VIEW)
     def get(self, request, *args, **kwargs):
         outcome = ServiceOutcome(ColoringGetService, kwargs | {'user_id': request.user.id})
-        return Response(ColoringListSerializer(
-            outcome.result,
-            many=False
-        ).data, status=status.HTTP_200_OK)
+        return Response(ColoringDetailSerializer(outcome.result).data, status=status.HTTP_200_OK)

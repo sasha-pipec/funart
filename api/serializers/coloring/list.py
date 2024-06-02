@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers.theme.list import ThemeListSerializer
 from models_app.models import Coloring
 
 
@@ -17,3 +18,8 @@ class ColoringListSerializer(serializers.ModelSerializer):
             'likes_count',
             'theme'
         )
+
+
+class ColoringDetailSerializer(serializers.Serializer):
+    coloring = ColoringListSerializer()
+    themes = ThemeListSerializer(many=True)
