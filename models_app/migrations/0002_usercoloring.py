@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'User coloring',
                 'verbose_name_plural': 'User coloring',
-                'db_table': 'user_coloring',
+                'db_table': 'image',
             },
         ),
     ]
