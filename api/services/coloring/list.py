@@ -1,17 +1,18 @@
 import json
-from functools import lru_cache
 
 from django import forms
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Value
-from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from service_objects.errors import ValidationError
 from service_objects.services import ServiceWithResult
+from functools import lru_cache
 
 from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import Coloring, Theme, User, LikeTheme, LikeColoring
 
 
-class ColoringListServices(ServiceWithResult):
+class ColoringListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     id = forms.IntegerField()
@@ -41,25 +42,21 @@ class ColoringListServices(ServiceWithResult):
         }
 
     @property
-    def _user(self):
-        users = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not users.exists():
-            raise ValidationError('The user with such data was not found')
-        return users.first()
-
-    @property
     @lru_cache
     def _theme_presence(self):
         themes = Theme.objects.prefetch_related('likes').annotate(
             likes_count=Count('likes'),
             is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )
         ).filter(id=self.cleaned_data['id'])
         if not themes.exists():
-            raise ValidationError('The themes with such data was not found')
+            raise ValidationError(
+                message='Тематика не найдена.',
+                response_status=status.HTTP_404_NOT_FOUND
+            )
         return themes.first()
 
     @property
@@ -67,7 +64,9 @@ class ColoringListServices(ServiceWithResult):
         return Coloring.objects.annotate(
             likes_count=Count('coloring_likes'),
             is_liked=(
-                Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
+                Exists(LikeColoring.objects.filter(
+                    coloring=OuterRef('id'), user_id=self.cleaned_data['user_id']
+                ))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )

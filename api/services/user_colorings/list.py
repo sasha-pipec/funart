@@ -8,7 +8,7 @@ from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import UserColoring
 
 
-class UserColoringsListServices(ServiceWithResult):
+class UserColoringsListService(ServiceWithResult):
     user_id = forms.IntegerField()
 
     def process(self):

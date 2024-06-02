@@ -5,7 +5,7 @@ from service_objects.services import ServiceWithResult
 from models_app.models import Theme, LikeTheme
 
 
-class ThemePopularListServices(ServiceWithResult):
+class ThemePopularListService(ServiceWithResult):
     user_id = forms.IntegerField(required=False)
 
     def process(self):
@@ -17,7 +17,10 @@ class ThemePopularListServices(ServiceWithResult):
         return Theme.objects.prefetch_related('likes').annotate(
             likes_count=Count('likes'),
             is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
+                Exists(LikeTheme.objects.filter(
+                    theme=OuterRef('id'),
+                    user_id=self.cleaned_data['user_id']
+                ))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )

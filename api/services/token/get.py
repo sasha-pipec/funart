@@ -7,7 +7,7 @@ from functools import lru_cache
 from models_app.models import User
 
 
-class TokenGetOrCreateServices(ServiceWithResult):
+class TokenGetOrCreateService(ServiceWithResult):
     email = forms.EmailField()
     password = forms.CharField()
 
@@ -20,7 +20,7 @@ class TokenGetOrCreateServices(ServiceWithResult):
         user = self._user_with_token
         if not user.check_password(self.cleaned_data['password']):
             raise ValidationError(
-                message='Invalid password',
+                message='Неверный пароль.',
                 response_status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -30,7 +30,7 @@ class TokenGetOrCreateServices(ServiceWithResult):
         users = User.objects.filter(email=self.cleaned_data['email'])
         if not users.exists():
             raise ValidationError(
-                message='User not found',
+                message='Пользователь не найден.',
                 response_status=status.HTTP_404_NOT_FOUND
             )
         user = users.first()

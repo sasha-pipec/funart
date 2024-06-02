@@ -1,15 +1,15 @@
-from django.core.paginator import Paginator
-from django.db.models import Count, OuterRef, Exists, Value
-from rest_framework.exceptions import ValidationError
-from service_objects.services import ServiceWithResult
-from django import forms
 import json
 
+from django.core.paginator import Paginator
+from django.db.models import Count, OuterRef, Exists, Value
+from service_objects.services import ServiceWithResult
+from django import forms
+
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Coloring, LikeColoring, User
+from models_app.models import Coloring, LikeColoring
 
 
-class ColoringAllListServices(ServiceWithResult):
+class ColoringAllListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     user_id = forms.IntegerField(required=False)
@@ -37,24 +37,15 @@ class ColoringAllListServices(ServiceWithResult):
         }
 
     @property
-    def _user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not user_obj.exists():
-            raise ValidationError('The user with such data was not found')
-        return user_obj.first()
-
-    @property
     def _get_coloring_list(self):
-        return (
-            Coloring.objects
-            .annotate(
-                likes_count=Count('coloring_likes'),
-                is_liked=(
-                    Exists(LikeColoring.objects.filter(coloring=OuterRef('id'), user=self._user))
-                    if self.cleaned_data['user_id']
-                    else Value(False)
-                )
+        return Coloring.objects.annotate(
+            likes_count=Count('coloring_likes'),
+            is_liked=(
+                Exists(LikeColoring.objects.filter(
+                    coloring=OuterRef('id'),
+                    user_id=self.cleaned_data['user_id']
+                ))
+                if self.cleaned_data['user_id']
+                else Value(False)
             )
-            .all()
-            .order_by("-likes_count")
-        )
+        ).all().order_by("-likes_count")

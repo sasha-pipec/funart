@@ -1,9 +1,5 @@
 import json
 
-from rest_framework.exceptions import ValidationError
-
-from models_app.models import User
-
 from django import forms
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Value
@@ -22,14 +18,18 @@ ORDER_BY = {
 }
 
 
-class ThemeListServices(ServiceWithResult):
+class ThemeListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     user_id = forms.IntegerField(required=False)
     order_by = forms.CharField(required=False)
-    descending = forms.BooleanField(required=False)
+    direction = forms.BooleanField(required=False)
 
     def process(self):
+        if not self.cleaned_data["order_by"]:
+            self.cleaned_data["order_by"] = "updated_at"
+        if not self.cleaned_data["direction"]:
+            self.cleaned_data["direction"] = False
         self._paginated_themes()
         return self
 
@@ -51,21 +51,16 @@ class ThemeListServices(ServiceWithResult):
         }
 
     @property
-    def _user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not user_obj.exists():
-            raise ValidationError('The user with such data was not found')
-        return user_obj.first()
-
-    @property
     def _themes(self):
         return Theme.objects.prefetch_related('likes').annotate(
             likes_count=Count('likes'),
             is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
+                Exists(LikeTheme.objects.filter(
+                    theme=OuterRef('id'), user_id=self.cleaned_data['user_id']
+                ))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )
         ).order_by(
-            ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['descending']), '-rating')
+            ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['direction']), '-rating')
         )

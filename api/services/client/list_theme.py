@@ -1,15 +1,14 @@
 import json
+
 from django import forms
 from django.core.paginator import Paginator
-from django.db.models import Count, F, Value, Case, When, Exists, OuterRef
-from rest_framework.exceptions import ValidationError
+from django.db.models import Count, Value
 from service_objects.services import ServiceWithResult
 from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import LikeTheme, Theme
-from models_app.models import User
 
 
-class PersonalThemeListServices(ServiceWithResult):
+class PersonalThemeListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     id = forms.IntegerField()
@@ -35,21 +34,13 @@ class PersonalThemeListServices(ServiceWithResult):
             'page_range': ",".join([str(p) for p in paginator.page_range]),
         }
 
-
-
     @property
     def _themes(self):
-        like_themes_id = (
-            LikeTheme.objects.filter(user=self.cleaned_data['id']).values_list('theme_id', flat=True)
-        )
-
-        themes = (
-            Theme.objects
-            .annotate(
-                likes_count=Count('likes'),
-                is_liked=Value(True)
-            )
-            .filter(id__in=like_themes_id)
-        )
-
+        like_themes_id = LikeTheme.objects.filter(
+            user=self.cleaned_data['id']
+        ).values_list('theme_id', flat=True)
+        themes = Theme.objects.annotate(
+            likes_count=Count('likes'),
+            is_liked=Value(True)
+        ).filter(id__in=like_themes_id)
         return themes

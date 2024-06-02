@@ -9,7 +9,7 @@ def custom_exception_handler(exc, context):
     try:
         if isinstance(exc, InvalidInputsError):
             response_status = 400
-            errors = [{error: exc.errors[error][0].message} for error in exc.errors]
+            errors = [{error: exc.errors[error][0].messages[0]} for error in exc.errors]
             errors_response = {}
             for error in errors:
                 errors_response |= error

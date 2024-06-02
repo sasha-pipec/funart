@@ -4,7 +4,7 @@ from service_objects.services import ServiceWithResult
 from models_app.models import Theme
 
 
-class ThemeCreateServices(ServiceWithResult):
+class ThemeCreateService(ServiceWithResult):
     name = forms.CharField()
     description = forms.CharField()
     image = forms.ImageField()

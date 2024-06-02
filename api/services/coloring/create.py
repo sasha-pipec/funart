@@ -1,12 +1,11 @@
 from django import forms
-from django.db.models import Count
 
 from service_objects.services import ServiceWithResult
 
 from models_app.models import Coloring, Theme
 
 
-class ColoringCreateServices(ServiceWithResult):
+class ColoringCreateService(ServiceWithResult):
     id = forms.IntegerField()
     name = forms.CharField()
     image = forms.ImageField()

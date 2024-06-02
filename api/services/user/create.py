@@ -6,21 +6,21 @@ from service_objects.services import ServiceWithResult
 from models_app.models import User
 
 
-class UserCreateServices(ServiceWithResult):
+class UserCreateService(ServiceWithResult):
     email = forms.EmailField()
     username = forms.CharField()
     password = forms.CharField()
 
     def process(self):
-        self.check_user()
+        self.user_presence()
         self.result = self.create_user()
         return self
 
-    def check_user(self):
-        user = User.objects.filter(email=self.cleaned_data['email'])
-        if user.exists():
+    def user_presence(self):
+        users = User.objects.filter(email=self.cleaned_data['email'])
+        if users.exists():
             raise ValidationError(
-                message='A user with that email already exists',
+                message='Пользователь с таким email уже существует.',
                 response_status=status.HTTP_400_BAD_REQUEST
             )
 

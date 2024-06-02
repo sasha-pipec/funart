@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
 
-from api.services.image.saving_image import UserColoringCreateUpdateService
+from api.services.user_colorings.update_or_create import UserColoringCreateUpdateService
 
 
 class SavingUserColoringView(APIView):
@@ -14,5 +14,4 @@ class SavingUserColoringView(APIView):
         ServiceOutcome(UserColoringCreateUpdateService,
                        {'coloring_id': kwargs['coloring_id'], 'user_id': request.user.id},
                        {'image': request.data['image']})
-
         return Response(status=status.HTTP_201_CREATED)

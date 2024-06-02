@@ -9,7 +9,7 @@ from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import Theme, LikeTheme
 
 
-class SearchServices(ServiceWithResult):
+class SearchService(ServiceWithResult):
     search = forms.CharField()
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
@@ -43,7 +43,10 @@ class SearchServices(ServiceWithResult):
             similarity_description=TrigramSimilarity("description", self.cleaned_data["search"]),
             likes_count=Count('likes'),
             is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
+                Exists(LikeTheme.objects.filter(
+                    theme=OuterRef('id'),
+                    user_id=self.cleaned_data['user_id']
+                ))
                 if self.cleaned_data['user_id']
                 else Value(False)
             )

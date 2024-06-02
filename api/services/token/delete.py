@@ -7,7 +7,7 @@ from service_objects.services import ServiceWithResult
 from models_app.models import User
 
 
-class TokenDeleteServices(ServiceWithResult):
+class TokenDeleteService(ServiceWithResult):
     user = ModelField(User)
 
     def process(self):

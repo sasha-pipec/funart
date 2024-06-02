@@ -1,16 +1,16 @@
 import json
 from functools import lru_cache
 
+from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Value
-from rest_framework.exceptions import ValidationError
+from rest_framework import status
 from service_objects.errors import NotFound
 from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Theme, Category, LikeTheme, User
-from django import forms
+from models_app.models import Theme, Category, LikeTheme
 
 
 class ThemeListByCategoryService(ServiceWithResult):
@@ -47,26 +47,19 @@ class ThemeListByCategoryService(ServiceWithResult):
         try:
             return Category.objects.get(id=self.cleaned_data["id"])
         except ObjectDoesNotExist:
-            raise NotFound(message="Такой категории не существует")
-
-    @property
-    def _user(self):
-        user_obj = User.objects.filter(id=self.cleaned_data['user_id'])
-        if not user_obj.exists():
-            raise ValidationError('The user with such data was not found')
-        return user_obj.first()
+            raise NotFound(
+                message="Такой категории не существует.",
+                response_status=status.HTTP_404_NOT_FOUND
+            )
 
     @property
     def _themes(self):
         if self._category:
-            return (
-                Theme.objects
-                .prefetch_related('likes')
-                .annotate(likes_count=Count('likes'),
-                          is_liked=Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user=self._user))
-                          if self.cleaned_data['user_id']
-                          else Value(False)
-                          )
-                .filter(category__in=[self._category])
-                .order_by("-updated_at")
-            )
+            return Theme.objects.prefetch_related('likes').annotate(
+                likes_count=Count('likes'),
+                is_liked=Exists(LikeTheme.objects.filter(
+                    theme=OuterRef('id'), user_id=self.cleaned_data["user_id"]
+                ))
+                if self.cleaned_data['user_id']
+                else Value(False)
+            ).filter(category__in=[self._category]).order_by("-updated_at")
