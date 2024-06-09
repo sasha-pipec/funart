@@ -50,7 +50,7 @@ class ThemeAdmin(admin.ModelAdmin):
                 image_np_array = np.array(pillow_image)
 
                 white = np.sum(image_np_array[:, :, :3], axis=2)
-                white_mask = np.where(white >= 120 * 3, 1, 0)
+                white_mask = np.where(white >= 160 * 3, 1, 0)
                 alpha = np.where(white_mask, 0, image_np_array[:, :, -1])
                 image_np_array[:, :, -1] = alpha
 
