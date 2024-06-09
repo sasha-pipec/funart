@@ -18,6 +18,7 @@ django-cors-headers = "*"
 drf-yasg = "*"
 pytils = "*"
 eventlet = "*"
+numpy = "*"
 
 [dev-packages]
 
