@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 
@@ -14,9 +15,11 @@ from models_app.models import Coloring, UserColoring
 class UserColoringCreateUpdateService(ServiceWithResult):
     user_id = forms.IntegerField()
     coloring_id = forms.IntegerField()
+    coloring_binary = forms.CharField()
     image = forms.ImageField()
 
     def process(self):
+        self.cleaned_data["coloring_json"] = json.loads(self.cleaned_data["coloring_binary"])
         self.update_or_create()
         return self
 
@@ -34,13 +37,15 @@ class UserColoringCreateUpdateService(ServiceWithResult):
         UserColoring.objects.create(
             user_id=self.cleaned_data['user_id'],
             coloring=self._coloring,
-            image=self.cleaned_data['image']
+            image=self.cleaned_data['image'],
+            coloring_json=self.cleaned_data["coloring_json"]
         )
 
     def update_user_coloring(self, user_coloring):
         # Удаляем физически старый файл
         os.remove(os.path.join(BASE_DIR, user_coloring.image.url[1:]))
         user_coloring.image = self.cleaned_data['image']
+        user_coloring.coloring_json = self.cleaned_data['coloring_json']
         user_coloring.save()
 
     @property

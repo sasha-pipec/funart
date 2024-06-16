@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='usercoloring',
+            model_name='UserColoring',
             name='image',
             field=models.ImageField(upload_to='user_colorings/', verbose_name='Цветная раскраска'),
         ),
