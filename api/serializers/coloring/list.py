@@ -7,8 +7,8 @@ from models_app.models import Coloring
 class ColoringListSerializer(serializers.ModelSerializer):
     is_liked = serializers.BooleanField()
     likes_count = serializers.IntegerField()
-    next = serializers.IntegerField()
-    previous = serializers.IntegerField()
+    next = serializers.IntegerField(default=None)
+    previous = serializers.IntegerField(default=None)
 
     class Meta:
         model = Coloring
