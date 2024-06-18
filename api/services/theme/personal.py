@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import Count, Exists, OuterRef, Value
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
 
@@ -30,7 +31,16 @@ class ThemePersonalListService(ServiceWithResult):
     def _themes_personal(self):
         liked_themes = self._liked_themes
         categories_themes = liked_themes.values_list("theme__category__id", flat=True).distinct()
-        recommend_themes = Theme.objects.filter(
+        recommend_themes = Theme.objects.prefetch_related('likes').annotate(
+            likes_count=Count('likes'),
+            is_liked=(
+                Exists(LikeTheme.objects.filter(
+                    theme=OuterRef('id'), user_id=self.cleaned_data['user'].id
+                ))
+                if self.cleaned_data['user'].id
+                else Value(False)
+            )
+        ).filter(
             category__id__in=categories_themes
         ).exclude(
             id__in=liked_themes

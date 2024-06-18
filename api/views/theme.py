@@ -20,7 +20,10 @@ class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(ThemeListService, request.GET.dict() | {'user_id': request.user.id})
+        if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
+            outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
+        else:
+            outcome = ServiceOutcome(ThemeListService, request.GET.dict() | {'user_id': request.user.id})
         return Response({
             "themes": ThemeListSerializer(
                 outcome.result.get('object_list'),
@@ -78,13 +81,13 @@ class ThemeListBySearchView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class ThemePersonalListView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
-        return Response({
-            "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
-            'page_data': outcome.result.get('page_range'),
-            'page_info': outcome.result.get('page_info'),
-        }, status=status.HTTP_200_OK)
+# class ThemePersonalListView(APIView):
+#     permission_classes = (permissions.IsAuthenticated,)
+#
+#     def get(self, request, *args, **kwargs):
+#         outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
+#         return Response({
+#             "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+#             'page_data': outcome.result.get('page_range'),
+#             'page_info': outcome.result.get('page_info'),
+#         }, status=status.HTTP_200_OK)
