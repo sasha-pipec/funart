@@ -3,7 +3,7 @@ from django.db.models import Count, Exists, OuterRef, Value
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
 
-from models_app.models import User, LikeTheme, Theme
+from models_app.models import User, LikeTheme, Theme, Category
 from utils.paginator import paginated_queryset
 
 ORDER_BY = {
@@ -30,6 +30,7 @@ class ThemePersonalListService(ServiceWithResult):
     @property
     def _themes_personal(self):
         liked_themes = self._liked_themes
+        all_categories = Category.objects.all().values_list("id", flat=True)
         categories_themes = liked_themes.values_list("theme__category__id", flat=True).distinct()
         recommend_themes = Theme.objects.prefetch_related('likes').annotate(
             likes_count=Count('likes'),
@@ -41,7 +42,7 @@ class ThemePersonalListService(ServiceWithResult):
                 else Value(False)
             )
         ).filter(
-            category__id__in=categories_themes
+            category__id__in=categories_themes or all_categories
         ).exclude(
             id__in=liked_themes
         ).order_by(
