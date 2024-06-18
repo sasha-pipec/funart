@@ -22,7 +22,7 @@ urlpatterns = [
 
     # Theme
     path('themes/', ThemeListCreateView.as_view()),
-    path('themes/personal/', ThemePersonalListView.as_view()),
+    # path('themes/personal/', ThemePersonalListView.as_view()),
     path('themes/populars/', ThemePopularListView.as_view()),
     path('themes/<int:id>/colorings/', ColoringListCreateView.as_view()),
 
