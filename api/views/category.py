@@ -10,6 +10,7 @@ from api.services.category.list import CategoryListService
 
 
 class CategoryListView(APIView):
+    authentication_classes = []
 
     @swagger_auto_schema(**CATEGORY_LIST_VIEW)
     def get(self, request, *args, **kwargs):
