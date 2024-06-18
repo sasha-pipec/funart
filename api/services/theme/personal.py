@@ -44,7 +44,7 @@ class ThemePersonalListService(ServiceWithResult):
         ).filter(
             category__id__in=categories_themes or all_categories
         ).exclude(
-            id__in=liked_themes
+            id__in=liked_themes.values_list("id", flat=True)
         ).order_by(
             ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['direction']), '-rating')
         )
