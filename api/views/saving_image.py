@@ -17,7 +17,7 @@ class SavingUserColoringView(APIView):
                        {
                            'coloring_id': kwargs['coloring_id'],
                            'user_id': request.user.id,
-                           'coloring_binary': request.data.get('coloring_json')
+                           'coloring_json': request.data.get('coloring_json')
                        },
-                       {'image': request.data['image']})
+                       {'image': request.data.get('image')})
         return Response(status=status.HTTP_201_CREATED)

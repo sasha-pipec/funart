@@ -4,15 +4,16 @@ from models_app.models import UserColoring
 
 
 class UserColoringSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='coloring.id')
     name = serializers.CharField(source='coloring.name')
-    base_image = serializers.CharField(source='coloring.image')
-    image = serializers.CharField()
+    image = serializers.CharField(source='coloring.image')
+    coloring_json = serializers.JSONField()
 
     class Meta:
         model = UserColoring
         fields = (
             'id',
             'name',
-            'base_image',
-            'image'
+            'image',
+            'coloring_json'
         )

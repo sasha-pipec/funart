@@ -1,15 +1,12 @@
-import json
-
 from django import forms
-from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Value
 from rest_framework import status
 from service_objects.errors import ValidationError
 from service_objects.services import ServiceWithResult
 from functools import lru_cache
 
-from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Coloring, Theme, User, LikeTheme, LikeColoring
+from models_app.models import Coloring, Theme, LikeTheme, LikeColoring
+from utils.paginator import paginated_queryset
 
 
 class ColoringListService(ServiceWithResult):
@@ -24,22 +21,12 @@ class ColoringListService(ServiceWithResult):
         return self
 
     def _paginated_colorings(self):
-        page = self.cleaned_data.get('page') or 1
-        paginator = Paginator(
-            self._colorings,
-            self.cleaned_data.get("per_page") or REST_FRAMEWORK["PAGE_SIZE"],
+        self.result = paginated_queryset(
+            queryset=self._colorings,
+            page=self.cleaned_data.get("page"),
+            per_page=self.cleaned_data.get("per_page")
         )
-        page_info = {
-            'has_previous': paginator.get_page(page).has_previous(),
-            'has_next': paginator.get_page(page).has_next(),
-            'num_page': json.dumps(page),
-        }
-        self.result = {
-            'page_info': page_info,
-            'object_list': paginator.page(page).object_list,
-            'page_range': ",".join([str(p) for p in paginator.page_range]),
-            'theme': self._theme_presence
-        }
+        self.result["theme"] = self._theme_presence
 
     @property
     @lru_cache
