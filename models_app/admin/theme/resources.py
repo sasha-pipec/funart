@@ -9,6 +9,7 @@ from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.safestring import mark_safe
 
 from models_app.models import Theme, Coloring
 
@@ -26,7 +27,7 @@ class ThemeAdmin(admin.ModelAdmin):
         "name",
         "description",
         "rating",
-        'image',
+        'get_html_photo',
         "created_at",
         "updated_at",
     ]
@@ -71,3 +72,8 @@ class ThemeAdmin(admin.ModelAdmin):
                 coloring.save()
                 os.remove(path_to_old_image)
 
+    def get_html_photo(self, object):
+        if object.image:
+            return mark_safe(
+                f"<div style='width:100px; background:white;'><img src='{object.image.url}' width=100></div>"
+            )

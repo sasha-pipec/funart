@@ -16,6 +16,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "username",
+        "email"
     ]
     readonly_fields = ["id", "created_at", "updated_at"]
     list_display_links = (

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from models_app.models import Coloring, Theme
 from django import forms
@@ -18,7 +19,7 @@ class ColoringAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
-        "image",
+        "get_html_photo",
         "created_at",
         "updated_at",
     ]
@@ -29,3 +30,9 @@ class ColoringAdmin(admin.ModelAdmin):
     )
     ordering = ("id", "theme", "created_at", "updated_at")
     form = ThemeFormAdmin
+
+    def get_html_photo(self, object):
+        if object.image:
+            return mark_safe(
+                f"<div style='width:100px; background:white;'><img src='{object.image.url}' width=100></div>"
+            )
