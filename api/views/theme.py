@@ -75,3 +75,9 @@ class ThemeListBySearchView(APIView):
             'page_data': outcome.result.get('page_range'),
             'page_info': outcome.result.get('page_info'),
         }, status=status.HTTP_200_OK)
+
+
+class ThemePersonalListView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        outcome = ServiceOutcome()

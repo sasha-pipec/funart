@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from django import forms
 from django.db.models import Count, OuterRef, Exists, Value
+from service_objects.errors import NotFound
 from service_objects.services import ServiceWithResult
 
 from models_app.models import Coloring, LikeColoring, Theme, LikeTheme
@@ -12,6 +13,7 @@ class ColoringGetService(ServiceWithResult):
     user_id = forms.IntegerField(required=False)
 
     def process(self):
+        self._coloring_presence()
         self.result = {
             "coloring": self._get_coloring,
             "themes": self._see_more_themes,
@@ -104,3 +106,9 @@ class ColoringGetService(ServiceWithResult):
         ).filter(
             category__in=self._get_coloring.theme.category.values_list("id", flat=True)
         ).order_by('-updated_at')[:6]
+
+    def _coloring_presence(self):
+        colorings = Coloring.objects.filter(id=self.cleaned_data["id"])
+        if not colorings.exists():
+            raise NotFound(message="Раскраска не найдена.", response_status=404)
+        return colorings.first()
