@@ -20,7 +20,7 @@ class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
     def get(self, request, *args, **kwargs):
-        if request.query_params.get("type") == "recommended":
+        if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
         else:
             outcome = ServiceOutcome(ThemeListService, request.GET.dict() | {'user_id': request.user.id})
