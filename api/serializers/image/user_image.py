@@ -12,7 +12,6 @@ class UserColoringSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         return obj.coloring.image.url
 
-
     class Meta:
         model = UserColoring
         fields = (
