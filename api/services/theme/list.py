@@ -1,12 +1,9 @@
-import json
-
 from django import forms
-from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Value
 from service_objects.services import ServiceWithResult
 
-from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import Theme, LikeTheme
+from utils.paginator import paginated_queryset
 
 ORDER_BY = {
     ('rating', True): 'rating',
@@ -34,21 +31,11 @@ class ThemeListService(ServiceWithResult):
         return self
 
     def _paginated_themes(self):
-        page = self.cleaned_data.get('page') or 1
-        paginator = Paginator(
-            self._themes,
-            self.cleaned_data.get("per_page") or REST_FRAMEWORK["PAGE_SIZE"],
+        self.result = paginated_queryset(
+            queryset=self._themes,
+            page=self.cleaned_data.get("page"),
+            per_page=self.cleaned_data.get("per_page")
         )
-        page_info = {
-            'has_previous': paginator.get_page(page).has_previous(),
-            'has_next': paginator.get_page(page).has_next(),
-            'num_page': json.dumps(page),
-        }
-        self.result = {
-            'page_info': page_info,
-            'object_list': paginator.page(page).object_list,
-            'page_range': ",".join([str(p) for p in paginator.page_range]),
-        }
 
     @property
     def _themes(self):

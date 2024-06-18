@@ -38,8 +38,6 @@ urlpatterns = [
     path('colorings/<int:coloring_id>/user_colorings/', SavingUserColoringView.as_view()),
     path('user_colorings/', UserColoringsListView.as_view()),
     path('user_colorings/<int:id>/', UserColoringDetailView.as_view()),
-    # Todo удаление раскраски раскрашенной
-
 
     # Search
     path('search/', ThemeListBySearchView.as_view()),
