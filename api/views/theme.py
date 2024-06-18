@@ -1,5 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
@@ -12,6 +12,7 @@ from api.services.theme.category.list import ThemeListByCategoryService
 from api.services.theme.create import ThemeCreateService
 from api.services.theme.list import ThemeListService
 from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
+from api.services.theme.personal import ThemePersonalListService
 from api.services.theme.popular import ThemePopularListService
 
 
@@ -78,6 +79,12 @@ class ThemeListBySearchView(APIView):
 
 
 class ThemePersonalListView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        outcome = ServiceOutcome()
+        outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
+        return Response({
+            "themes": ThemeListSerializer(outcome.result.get('object_list'), many=True).data,
+            'page_data': outcome.result.get('page_range'),
+            'page_info': outcome.result.get('page_info'),
+        }, status=status.HTTP_200_OK)
