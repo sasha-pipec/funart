@@ -10,7 +10,7 @@ from api.views.user_image_coloring import UserColoringDetailView
 from api.views.saving_image import SavingUserColoringView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
-                             ThemeListBySearchView, ThemePopularListView)
+                             ThemeListBySearchView, ThemePopularListView, ThemePersonalListView)
 from api.views.token import TokenGetDeleteView
 from api.views.user import CreateUserView, CurrentUserView
 from api.views.user_list_image import UserColoringsListView
@@ -22,7 +22,7 @@ urlpatterns = [
 
     # Theme
     path('themes/', ThemeListCreateView.as_view()),
-    path('themes/personal/', ThemeListCreateView.as_view()),
+    path('themes/personal/', ThemePersonalListView.as_view()),
     path('themes/populars/', ThemePopularListView.as_view()),
     path('themes/<int:id>/colorings/', ColoringListCreateView.as_view()),
 
