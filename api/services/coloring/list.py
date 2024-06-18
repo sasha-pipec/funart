@@ -8,10 +8,18 @@ from functools import lru_cache
 from models_app.models import Coloring, Theme, LikeTheme, LikeColoring
 from utils.paginator import paginated_queryset
 
+ORDER_BY = {
+    ('updated_at', True): 'updated_at',
+    ('updated_at', False): '-updated_at',
+    ('likes_count', True): 'likes_count',
+    ('likes_count', False): '-likes_count',
+}
+
 
 class ColoringListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
+    order_by = forms.CharField(required=False)
     id = forms.IntegerField()
     user_id = forms.IntegerField(required=False)
 
@@ -57,7 +65,9 @@ class ColoringListService(ServiceWithResult):
                 if self.cleaned_data['user_id']
                 else Value(False)
             )
-        ).filter(theme=self._theme_presence).order_by("-id")
+        ).filter(theme=self._theme_presence).order_by(
+            ORDER_BY.get((self.cleaned_data['order_by'], False), '-id')
+        )
 
     @lru_cache
     def _update_rating(self):

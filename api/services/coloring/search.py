@@ -8,12 +8,20 @@ from service_objects.services import ServiceWithResult
 from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import Theme, LikeTheme
 
+ORDER_BY = {
+    ('updated_at', True): 'updated_at',
+    ('updated_at', False): '-updated_at',
+    ('likes_count', True): 'likes_count',
+    ('likes_count', False): '-likes_count',
+}
+
 
 class SearchService(ServiceWithResult):
     search = forms.CharField()
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
     user_id = forms.IntegerField(required=False)
+    order_by = forms.CharField(required=False)
 
     def process(self):
         self._paginated_search()
@@ -53,5 +61,8 @@ class SearchService(ServiceWithResult):
         ).filter(
             Q(similarity_name__gt=0.3) |
             Q(similarity_description__gt=0.2)
-        ).order_by("-similarity_name", "-similarity_description")
+        ).order_by(
+            "-similarity_name", "-similarity_description",
+            ORDER_BY.get((self.cleaned_data['order_by'], False), '-rating')
+        )
         return themes
