@@ -10,7 +10,7 @@ from api.views.user_image_coloring import UserColoringDetailView
 from api.views.saving_image import SavingUserColoringView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
-                             ThemeListBySearchView, ThemePopularListView, ThemePersonalListView)
+                             ThemeListBySearchView, ThemePopularListView)
 from api.views.token import TokenGetDeleteView
 from api.views.user import CreateUserView, CurrentUserView
 from api.views.user_list_image import UserColoringsListView
