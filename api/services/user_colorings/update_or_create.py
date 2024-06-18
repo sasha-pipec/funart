@@ -15,11 +15,10 @@ from models_app.models import Coloring, UserColoring
 class UserColoringCreateUpdateService(ServiceWithResult):
     user_id = forms.IntegerField()
     coloring_id = forms.IntegerField()
-    coloring_binary = forms.CharField()
+    coloring_json = forms.JSONField()
     image = forms.ImageField()
 
     def process(self):
-        self.cleaned_data["coloring_json"] = json.loads(self.cleaned_data["coloring_binary"])
         self.update_or_create()
         return self
 
