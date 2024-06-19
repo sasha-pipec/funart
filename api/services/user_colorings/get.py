@@ -46,6 +46,8 @@ class UserColoringGetService(ServiceWithResult):
             )
         ).filter(
             category__in=self._get_coloring.theme.category.values_list("id", flat=True)
+        ).exclude(
+            id=self._get_coloring.theme.id
         ).order_by('-updated_at')[:6]
 
     @property

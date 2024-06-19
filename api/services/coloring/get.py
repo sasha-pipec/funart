@@ -105,6 +105,8 @@ class ColoringGetService(ServiceWithResult):
             )
         ).filter(
             category__in=self._get_coloring.theme.category.values_list("id", flat=True)
+        ).exclude(
+            id=self.get_theme_id()
         ).order_by('-updated_at')[:6]
 
     def _coloring_presence(self):
