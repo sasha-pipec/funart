@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.serializers.theme.list import ThemeListSerializer
-from models_app.models import Coloring
+from models_app.models import Coloring, LikeColoring
 
 
 class ColoringListSerializer(serializers.ModelSerializer):
@@ -9,6 +9,9 @@ class ColoringListSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField()
     next = serializers.IntegerField(default=None)
     previous = serializers.IntegerField(default=None)
+
+    def get_likes_count(self, obj):
+        return LikeColoring.objects.filter(coloring=obj).count()
 
     class Meta:
         model = Coloring
@@ -27,4 +30,3 @@ class ColoringListSerializer(serializers.ModelSerializer):
 class ColoringDetailSerializer(serializers.Serializer):
     coloring = ColoringListSerializer()
     themes = ThemeListSerializer(many=True)
-
