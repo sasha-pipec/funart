@@ -1,8 +1,10 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
+from django.views.decorators.cache import cache_page
 
 from api.docs.coloring import COLORING_LIST_BY_SEARCH_VIEW
 from api.docs.theme import THEME_BY_CATEGORY_LIST_VIEW, THEME_LIST_VIEW, THEME_POPULAR_LIST_VIEW, THEME_CREATE_VIEW
@@ -14,11 +16,12 @@ from api.services.theme.list import ThemeListService
 from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
 from api.services.theme.personal import ThemePersonalListService
 from api.services.theme.popular import ThemePopularListService
-
+from django.utils.decorators import method_decorator
 
 class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
+    @method_decorator(cache_page(86400))
     def get(self, request, *args, **kwargs):
         if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
@@ -79,7 +82,6 @@ class ThemeListBySearchView(APIView):
             'page_data': outcome.result.get('page_range'),
             'page_info': outcome.result.get('page_info'),
         }, status=status.HTTP_200_OK)
-
 
 # class ThemePersonalListView(APIView):
 #     permission_classes = (permissions.IsAuthenticated,)
