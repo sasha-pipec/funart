@@ -1,0 +1,6 @@
+2024-07-15 21:10:04,185 INFO Domaine name 127.0.0.1:8000
+2024-07-15 21:10:04,185 INFO Body b'----------------------------111111696613256692928330\r\nContent-Disposition: form-data; name="OLD"\r\n\r\n25\r\n----------------------------111111696613256692928330--\r\n'
+2024-07-15 21:10:04,186 INFO Headers {'Content-Length': '160', 'Content-Type': 'multipart/form-data; boundary=--------------------------111111696613256692928330', 'Authorization': 'Token bf579b71eea69a5c844f97c51edca3893fa9267a', 'User-Agent': 'PostmanRuntime/7.40.0', 'Accept': '*/*', 'Postman-Token': 'ae7e1134-a490-472a-b129-1406036b3d2a', 'Host': '127.0.0.1:8000', 'Accept-Encoding': 'gzip, deflate, br', 'Connection': 'keep-alive', 'Cookie': 'csrftoken=daFiEcyKYqcwptReQ5tzjvUeuqpI77e85Dm7O4djwIVtUVIFbvUuSNCyfVHeF22r'}
+2024-07-15 21:10:04,186 INFO Query_params <QueryDict: {'XXXXXXXXXXXXXXXXXXXXXXXXXXXX': ['11111111111111111111111111111111111111111']}>
+2024-07-15 21:10:04,186 INFO Method GET
+2024-07-15 21:10:04,354 INFO status code 200
