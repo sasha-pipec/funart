@@ -10,9 +10,9 @@ from api.views.user_image_coloring import UserColoringDetailView
 from api.views.saving_image import SavingUserColoringView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
-                             ThemeListBySearchView, ThemePopularListView)
+                             ThemeListBySearchView, ThemePopularListView, )
 from api.views.token import TokenGetDeleteView
-from api.views.user import CreateUserView, CurrentUserView
+from api.views.user import CreateUpdateUserView, CurrentUserView
 from api.views.user_list_image import UserColoringsListView
 
 urlpatterns = [
@@ -44,7 +44,7 @@ urlpatterns = [
     path('search/', ThemeListBySearchView.as_view()),
 
     # User
-    path('users/', CreateUserView.as_view()),
+    path('users/', CreateUpdateUserView.as_view()),
     path('users/me/', CurrentUserView.as_view()),
     path('users/auth/', TokenGetDeleteView.as_view()),
 
