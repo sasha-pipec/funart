@@ -3,7 +3,7 @@ from conf.settings.django import env
 
 REDIS_HOST = env("REDIS_HOST", cast=str, default="127.0.0.1")
 REDIS_PORT = env("REDIS_PORT", cast=str, default="6379")
-CACHE_EXPIRE = env("CACHE_EXPIRE", cast=int)
+CACHE_EXPIRE = env("CACHE_EXPIRE", cast=int, default=3000)
 
 
 REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}'
