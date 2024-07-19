@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('models_app', '0004_usercoloring_coloring_json'),
+        ('models_app', '0005_user_image'),
     ]
 
     operations = [
