@@ -24,7 +24,7 @@ from conf.settings.redis import CACHE_EXPIRE
 class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
-    @method_decorator(cache_page(CACHE_EXPIRE))
+    #@method_decorator(cache_page(CACHE_EXPIRE))
     def get(self, request, *args, **kwargs):
         if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
