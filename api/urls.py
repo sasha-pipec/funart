@@ -1,6 +1,6 @@
 from django.urls import path
 
-from api.views.banner import BannerListCreateDeleteView, BannerDetailView
+from api.views.banner import BannerListView
 from api.views.category import CategoryListView
 from api.views.client_theme_coloring import (PersonalThemeListView,
                                              PersonalColoringListView)
@@ -45,8 +45,7 @@ urlpatterns = [
     path('search/', ThemeListBySearchView.as_view()),
 
     # Banner
-    path('banners/<int:id>/', BannerDetailView.as_view()),
-    path('banners/', BannerListCreateDeleteView.as_view()),
+    path('banners/', BannerListView.as_view()),
 
     # User
     path('users/', CreateUpdateUserView.as_view()),
