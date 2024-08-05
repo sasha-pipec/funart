@@ -4,3 +4,4 @@ __pycache__/
 media/
 Pipfile.lock
 uploads/
+logging_file.log
