@@ -142,3 +142,5 @@ CORS_ALLOW_HEADERS = ['*']
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", cast=lambda v: [s.strip() for s in v.split(",")])
 
 AUTH_USER_MODEL = 'models_app.User'
+
+ENABLE_CASHING = False
