@@ -25,7 +25,7 @@ from utils.cashe_off_on import cash_off_on
 class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
-    @cash_off_on
+    @cash_off_on(CACHE_EXPIRE=CACHE_EXPIRE)
     def get(self, request, *args, **kwargs):
         if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
