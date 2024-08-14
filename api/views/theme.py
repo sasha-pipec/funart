@@ -19,12 +19,13 @@ from api.services.theme.popular import ThemePopularListService
 from django.utils.decorators import method_decorator
 
 from conf.settings.redis import CACHE_EXPIRE
+from utils.cashe_off_on import cash_off_on
 
 
 class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
-    #@method_decorator(cache_page(CACHE_EXPIRE))
+    @cash_off_on(CACHE_EXPIRE=CACHE_EXPIRE)
     def get(self, request, *args, **kwargs):
         if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})
