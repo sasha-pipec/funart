@@ -7,14 +7,14 @@ from api.views.client_theme_coloring import (PersonalThemeListView,
 from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
 from api.views.coloring_like import ColoringLikeCreateDeleteView
-from api.views.user_image_coloring import UserColoringDetailView
+from api.views.user_image_coloring import UserColoringDetailUpdateView
 from api.views.saving_image import SavingUserColoringView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
                              ThemeListBySearchView, ThemePopularListView, )
 from api.views.token import TokenGetDeleteView
 from api.views.user import CreateUpdateUserView, CurrentUserView
-from api.views.user_list_image import UserColoringsListView
+from api.views.user_list_image import UserColoringsListCreateView
 
 urlpatterns = [
     # Category
@@ -38,8 +38,8 @@ urlpatterns = [
 
     # User coloring
     path('colorings/<int:coloring_id>/user_colorings/', SavingUserColoringView.as_view()),
-    path('user_colorings/', UserColoringsListView.as_view()),
-    path('user_colorings/<int:id>/', UserColoringDetailView.as_view()),
+    path('user_colorings/', UserColoringsListCreateView.as_view()),
+    path('user_colorings/<int:id>/', UserColoringDetailUpdateView.as_view()),
 
     # Search
     path('search/', ThemeListBySearchView.as_view()),
