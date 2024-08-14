@@ -6,9 +6,9 @@ from service_objects.services import ServiceOutcome
 
 from api.serializers.image.user_list_image import UserColoringsListSerializer
 from api.services.user_colorings.list import UserColoringsListService
+from api.services.user_colorings.create import UserColoringCreateService
 
-
-class UserColoringsListView(APIView):
+class UserColoringsListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -21,3 +21,13 @@ class UserColoringsListView(APIView):
             'page_data': outcome.result.get('page_range'),
             'page_info': outcome.result.get('page_info'),
         }, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        ServiceOutcome(UserColoringCreateService,
+                       {
+                           'coloring_id': request.data['coloring_id'],
+                           'user_id': request.user.id,
+                           'coloring_json': request.data.get('coloring_json')
+                       },
+                       {'image': request.data.get('image')})
+        return Response(status=status.HTTP_201_CREATED)
