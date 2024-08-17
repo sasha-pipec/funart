@@ -1,31 +1,27 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status, permissions
-from rest_framework.decorators import api_view
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
-from django.views.decorators.cache import cache_page
 
 from api.docs.coloring import COLORING_LIST_BY_SEARCH_VIEW
 from api.docs.theme import THEME_BY_CATEGORY_LIST_VIEW, THEME_LIST_VIEW, THEME_POPULAR_LIST_VIEW, THEME_CREATE_VIEW
 from api.serializers.category.list import CategoryListSerializer
+from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
 from api.services.coloring.search import SearchService
 from api.services.theme.category.list import ThemeListByCategoryService
 from api.services.theme.create import ThemeCreateService
 from api.services.theme.list import ThemeListService
-from api.serializers.theme.list import ThemeListSerializer, ThemeListPopularSerializer
 from api.services.theme.personal import ThemePersonalListService
 from api.services.theme.popular import ThemePopularListService
-from django.utils.decorators import method_decorator
-
 from conf.settings.redis import CACHE_EXPIRE
-from utils.cashe_off_on import cash_off_on
+from utils.cashe_off_on import cache_off_on
 
 
 class ThemeListCreateView(APIView):
 
     @swagger_auto_schema(**THEME_LIST_VIEW)
-    @cash_off_on(CACHE_EXPIRE=CACHE_EXPIRE)
+    @cache_off_on(CACHE_EXPIRE=CACHE_EXPIRE)
     def get(self, request, *args, **kwargs):
         if request.query_params.get("type") == "recommended" and request.user.is_authenticated:
             outcome = ServiceOutcome(ThemePersonalListService, request.GET.dict() | {"user": request.user})

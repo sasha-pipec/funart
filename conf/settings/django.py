@@ -143,4 +143,3 @@ CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", cast=lambda v: [s.strip() for
 
 AUTH_USER_MODEL = 'models_app.User'
 
-ENABLE_CASHING = False

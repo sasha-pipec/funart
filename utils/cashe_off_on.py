@@ -1,13 +1,12 @@
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from conf.settings.django import ENABLE_CASHING
+from conf.settings.redis import ENABLE_CASHING
 
 
-def cash_off_on(CACHE_EXPIRE):
-    def cash(fun):
-        enable_caching = ENABLE_CASHING
-        if enable_caching:
+def cache_off_on(CACHE_EXPIRE):
+    def cache_decorator(fun):
+        if ENABLE_CASHING:
             @method_decorator(cache_page(CACHE_EXPIRE))
             def wrapper(request, *args, **kwargs):
                 result = fun(request, *args, **kwargs)
@@ -18,4 +17,4 @@ def cash_off_on(CACHE_EXPIRE):
                 return result
         return wrapper
 
-    return cash
+    return cache_decorator
