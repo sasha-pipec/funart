@@ -60,5 +60,6 @@ class ColoringDetailView(APIView):
 
     @swagger_auto_schema(**COLORING_GET_VIEW)
     def get(self, request, *args, **kwargs):
+        a= request.data
         outcome = ServiceOutcome(ColoringGetService, kwargs | {'user_id': request.user.id})
         return Response(ColoringDetailSerializer(outcome.result).data, status=status.HTTP_200_OK)

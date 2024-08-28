@@ -8,7 +8,6 @@ from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
                                 ColoringDownloadView, ColoringAllDetailView)
 from api.views.coloring_like import ColoringLikeCreateDeleteView
 from api.views.user_image_coloring import UserColoringDetailUpdateView
-from api.views.saving_image import SavingUserColoringView
 from api.views.theme_like import ThemeLikeCreateDeleteView
 from api.views.theme import (ThemeListCreateView, ThemeListByCategoryView,
                              ThemeListBySearchView, ThemePopularListView, )
@@ -37,7 +36,6 @@ urlpatterns = [
     path('personal_area/colorings/', PersonalColoringListView.as_view()),
 
     # User coloring
-    path('colorings/<int:coloring_id>/user_colorings/', SavingUserColoringView.as_view()),
     path('user_colorings/', UserColoringsListCreateView.as_view()),
     path('user_colorings/<int:id>/', UserColoringDetailUpdateView.as_view()),
 
