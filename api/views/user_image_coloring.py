@@ -6,9 +6,9 @@ from service_objects.services import ServiceOutcome
 
 from api.serializers.image.user_image import UserColoringSerializer
 from api.serializers.theme.list import ThemeListSerializer
+from api.services.user_colorings.delete import UserColoringDeleteService
 from api.services.user_colorings.get import UserColoringGetService
 from api.services.user_colorings.update import UserColoringUpdateService
-from models_app.models import UserColoring
 
 
 class UserColoringDetailUpdateView(APIView):
@@ -27,16 +27,10 @@ class UserColoringDetailUpdateView(APIView):
         )
 
     def patch(self, request, *args, **kwargs):
-        ServiceOutcome(UserColoringUpdateService, {
-            'user_coloring_id': kwargs['id'], 'user_id': request.user.id,
-            'coloring_json': request.data.get('coloring_json'),
-        },
-                       {'image': request.data.get('image')})
-        return Response(status=status.HTTP_201_CREATED)
+        data = request.data.dict() if request.data else request.data
+        ServiceOutcome(UserColoringUpdateService, data | kwargs, request.FILES)
+        return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
-        delete_user_coloring = UserColoring.objects.get(
-            id=kwargs['id']
-        )
-        delete_user_coloring.delete()
+        ServiceOutcome(UserColoringDeleteService, kwargs)
         return Response(status=204)

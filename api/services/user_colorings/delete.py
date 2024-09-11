@@ -9,23 +9,18 @@ from models_app.models import UserColoring
 from utils.manager_helpers import get_or_none
 
 
-class UserColoringUpdateService(ServiceWithResult):
+class UserColoringDeleteService(ServiceWithResult):
     id = forms.IntegerField()
-    coloring_json = forms.JSONField()
-    image = forms.ImageField()
 
     custom_validations = ['_user_coloring_presence']
 
     def process(self):
         self.run_custom_validations()
-        self._update_user_coloring()
+        self._delete_user_coloring()
         return self
 
-    def _update_user_coloring(self):
-        user_coloring = self._user_coloring
-        user_coloring.image = self.cleaned_data['image']
-        user_coloring.coloring_json = self.cleaned_data['coloring_json']
-        user_coloring.save()
+    def _delete_user_coloring(self):
+        self._user_coloring.delete()
 
     def _user_coloring_presence(self):
         if not self._user_coloring:

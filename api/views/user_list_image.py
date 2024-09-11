@@ -24,5 +24,6 @@ class UserColoringsListCreateView(APIView):
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        ServiceOutcome(UserColoringCreateService, request.data | {'user': request.user}, request.FILES)
+        data = request.data.dict() if request.data else request.data
+        ServiceOutcome(UserColoringCreateService, data | {'user': request.user}, request.FILES)
         return Response(status=status.HTTP_201_CREATED)
