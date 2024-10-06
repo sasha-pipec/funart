@@ -34,10 +34,11 @@ class ColoringListCreateView(APIView):
     def get(self, request, *args, **kwargs):
         outcome = ServiceOutcome(ColoringListService, request.GET.dict() | kwargs | {'user_id': request.user.id})
         return Response({
-            "colorings": ColoringListSerializer(outcome.result.get('object_list'), many=True).data,
+            "colorings": ColoringListSerializer(outcome.result.get('object_list'), many=True,
+                                                context={'user_id': request.user.id}).data,
             'page_data': outcome.result.get('page_range'),
             'page_info': outcome.result.get('page_info'),
-            'theme': ThemeListSerializer(outcome.result.get('theme')).data,
+            'theme': ThemeListSerializer(outcome.result.get('theme'), context={'user_id': request.user.id}).data,
         }, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(**COLORING_CREATE_VIEW, auto_schema=None)

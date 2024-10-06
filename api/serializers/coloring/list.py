@@ -5,13 +5,18 @@ from models_app.models import Coloring, LikeColoring
 
 
 class ColoringListSerializer(serializers.ModelSerializer):
-    is_liked = serializers.BooleanField()
-    likes_count = serializers.IntegerField()
+    is_liked = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
     next = serializers.IntegerField(default=None)
     previous = serializers.IntegerField(default=None)
 
     def get_likes_count(self, obj):
-        return LikeColoring.objects.filter(coloring=obj).count()
+        return obj.coloring_likes.count()
+
+    def get_is_liked(self, obj):
+        return True if LikeColoring.objects.filter(
+            coloring_id=obj.id, user_id=self.context['user_id']
+        ).exists() else False
 
     class Meta:
         model = Coloring

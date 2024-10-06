@@ -1,8 +1,7 @@
 from django import forms
-from django.db.models import Count, Exists, OuterRef, Value
 from service_objects.services import ServiceWithResult
 
-from models_app.models import Theme, LikeTheme
+from models_app.models import Theme
 from utils.paginator import paginated_queryset
 
 ORDER_BY = {
@@ -18,7 +17,6 @@ ORDER_BY = {
 class ThemeListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
     per_page = forms.IntegerField(required=False, min_value=1)
-    user_id = forms.IntegerField(required=False)
     order_by = forms.CharField(required=False)
     direction = forms.BooleanField(required=False)
 
@@ -39,15 +37,6 @@ class ThemeListService(ServiceWithResult):
 
     @property
     def _themes(self):
-        return Theme.objects.prefetch_related('likes').annotate(
-            likes_count=Count('likes'),
-            is_liked=(
-                Exists(LikeTheme.objects.filter(
-                    theme=OuterRef('id'), user_id=self.cleaned_data['user_id']
-                ))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            )
-        ).order_by(
+        return Theme.objects.prefetch_related('likes').order_by(
             ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['direction']), '-rating')
         )

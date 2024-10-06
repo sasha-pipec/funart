@@ -39,14 +39,7 @@ class ColoringListService(ServiceWithResult):
     @property
     @lru_cache
     def _theme_presence(self):
-        themes = Theme.objects.prefetch_related('likes').annotate(
-            likes_count=Count('likes'),
-            is_liked=(
-                Exists(LikeTheme.objects.filter(theme=OuterRef('id'), user_id=self.cleaned_data['user_id']))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            )
-        ).filter(id=self.cleaned_data['id'])
+        themes = Theme.objects.prefetch_related('likes').filter(id=self.cleaned_data['id'])
         if not themes.exists():
             raise ValidationError(
                 message='Тематика не найдена.',
@@ -56,18 +49,11 @@ class ColoringListService(ServiceWithResult):
 
     @property
     def _colorings(self):
-        return Coloring.objects.annotate(
-            likes_count=Count('coloring_likes'),
-            is_liked=(
-                Exists(LikeColoring.objects.filter(
-                    coloring=OuterRef('id'), user_id=self.cleaned_data['user_id']
-                ))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            )
-        ).filter(theme=self._theme_presence).order_by(
+        return Coloring.objects.filter(theme=self._theme_presence).order_by(
             ORDER_BY.get((self.cleaned_data['order_by'], False), '-id')
         )
+
+
 
     @lru_cache
     def _update_rating(self):

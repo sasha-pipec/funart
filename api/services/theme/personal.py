@@ -32,21 +32,12 @@ class ThemePersonalListService(ServiceWithResult):
         liked_themes = self._liked_themes
         all_categories = Category.objects.all().values_list("id", flat=True)
         categories_themes = liked_themes.values_list("theme__category__id", flat=True).distinct()
-        recommend_themes = Theme.objects.prefetch_related('likes').annotate(
-            likes_count=Count('likes'),
-            is_liked=(
-                Exists(LikeTheme.objects.filter(
-                    theme=OuterRef('id'), user_id=self.cleaned_data['user'].id
-                ))
-                if self.cleaned_data['user'].id
-                else Value(False)
-            )
-        ).filter(
+        recommend_themes = Theme.objects.prefetch_related('likes').filter(
             category__id__in=categories_themes or all_categories
         ).exclude(
             id__in=liked_themes.values_list("theme__id", flat=True)
         ).order_by(
-            ORDER_BY.get((self.cleaned_data['order_by'], self.cleaned_data['direction']), '-rating')
+            self._get_order_by()
         )
         return paginated_queryset(
             queryset=recommend_themes,
@@ -57,3 +48,9 @@ class ThemePersonalListService(ServiceWithResult):
     @property
     def _liked_themes(self):
         return LikeTheme.objects.filter(user=self.cleaned_data["user"])
+
+    def _get_order_by(self):
+        order_by = self.cleaned_data.get("order_by")
+        direction = self.cleaned_data.get("direction")
+        return ORDER_BY.get((order_by, direction), '-rating')
+
