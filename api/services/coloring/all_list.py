@@ -1,12 +1,12 @@
 import json
 
-from django.core.paginator import Paginator
-from django.db.models import Count, OuterRef, Exists, Value
-from service_objects.services import ServiceWithResult
 from django import forms
+from django.core.paginator import Paginator
+from django.db.models import Count
+from service_objects.services import ServiceWithResult
 
 from conf.settings.rest_framework import REST_FRAMEWORK
-from models_app.models import Coloring, LikeColoring
+from models_app.models import Coloring
 
 
 class ColoringAllListService(ServiceWithResult):
@@ -39,13 +39,5 @@ class ColoringAllListService(ServiceWithResult):
     @property
     def _get_coloring_list(self):
         return Coloring.objects.annotate(
-            likes_count=Count('coloring_likes'),
-            is_liked=(
-                Exists(LikeColoring.objects.filter(
-                    coloring=OuterRef('id'),
-                    user_id=self.cleaned_data['user_id']
-                ))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            )
+            likes_count=Count('coloring_likes')
         ).all().order_by("-likes_count")
