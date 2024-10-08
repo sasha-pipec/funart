@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from models_app.models import Theme, LikeTheme
 
+#  Todo ______themes/<int:id>/colorings/___________________________________________________
 
 class ThemeListSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()

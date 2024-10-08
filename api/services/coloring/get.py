@@ -1,11 +1,11 @@
 from functools import lru_cache
 
 from django import forms
-from django.db.models import Count, OuterRef, Exists, Value
+from django.db.models import Value
 from service_objects.errors import NotFound
 from service_objects.services import ServiceWithResult
 
-from models_app.models import Coloring, LikeColoring, Theme, LikeTheme
+from models_app.models import Coloring, Theme
 
 
 class ColoringGetService(ServiceWithResult):
@@ -25,15 +25,6 @@ class ColoringGetService(ServiceWithResult):
     def _get_coloring(self):
         next_coloring, previous_coloring = self._get_navigation
         return Coloring.objects.select_related("theme").annotate(
-            likes_count=Count('coloring_likes'),
-            is_liked=(
-                Exists(LikeColoring.objects.filter(
-                    coloring=OuterRef('id'),
-                    user_id=self.cleaned_data['user_id']
-                ))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            ),
             next=Value(next_coloring),
             previous=Value(previous_coloring)
         ).get(id=self.cleaned_data['id'])
@@ -55,9 +46,10 @@ class ColoringGetService(ServiceWithResult):
     def get_first_coloring_from_the_next_theme(self, theme_id):
         theme_all_id = self.get_list_id_all_theme()
         index_theme = theme_all_id.index(theme_id)
-        next_theme_id = theme_all_id[0]
         if index_theme != len(theme_all_id) - 1:
             next_theme_id = theme_all_id[index_theme + 1]
+        else:
+            next_theme_id = theme_all_id[0]
         colorings_id_list = self.get_colorings_id_list(next_theme_id)
         if colorings_id_list:
             return list(colorings_id_list)[0]
@@ -71,9 +63,10 @@ class ColoringGetService(ServiceWithResult):
     def get_latest_coloring_from_the_previous_theme(self, theme_id):
         theme_all_id = self.get_list_id_all_theme()
         index_theme = theme_all_id.index(theme_id)
-        previous_theme_id = theme_all_id[index_theme - 1]
         if index_theme == 0:
             previous_theme_id = theme_all_id[-1]
+        else:
+            previous_theme_id = theme_all_id[index_theme - 1]
         colorings_id_list = self.get_colorings_id_list(previous_theme_id)
         if colorings_id_list:
             return list(colorings_id_list)[-1]
@@ -81,7 +74,7 @@ class ColoringGetService(ServiceWithResult):
 
     @lru_cache
     def get_theme_id(self):
-        return Coloring.objects.filter(id=self.cleaned_data['id']).first().theme.id
+        return self._coloring_presence().theme.id
 
     @staticmethod
     @lru_cache
@@ -94,21 +87,13 @@ class ColoringGetService(ServiceWithResult):
 
     @property
     def _see_more_themes(self):
-        return Theme.objects.prefetch_related('likes').annotate(
-            likes_count=Count('likes'),
-            is_liked=(
-                Exists(LikeTheme.objects.filter(
-                    theme=OuterRef('id'), user_id=self.cleaned_data['user_id']
-                ))
-                if self.cleaned_data['user_id']
-                else Value(False)
-            )
-        ).filter(
+        return Theme.objects.prefetch_related('likes').filter(
             category__in=self._get_coloring.theme.category.values_list("id", flat=True)
         ).exclude(
             id=self.get_theme_id()
         ).order_by('-updated_at')[:6]
 
+    @lru_cache
     def _coloring_presence(self):
         colorings = Coloring.objects.filter(id=self.cleaned_data["id"])
         if not colorings.exists():

@@ -8,6 +8,7 @@ from service_objects.services import ServiceWithResult
 from conf.settings.rest_framework import REST_FRAMEWORK
 from models_app.models import Coloring
 
+# Todo ______________________________colorings/---------------------------------
 
 class ColoringAllListService(ServiceWithResult):
     page = forms.IntegerField(required=False, min_value=1)
