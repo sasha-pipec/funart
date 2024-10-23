@@ -30,7 +30,7 @@ urlpatterns = [
 
     # Coloring
     path('colorings/', ColoringAllDetailView.as_view()),
-    path('colorings/<int:id>/', ColoringDetailView.as_view()),
+    path('colorings/<int:coloring_id>/', ColoringDetailView.as_view()),
     path('colorings/<int:id>/download/', ColoringDownloadView.as_view()),
 
     # Personal
