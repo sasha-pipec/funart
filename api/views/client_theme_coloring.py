@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
 
-from api.serializers.coloring.list import ColoringListSerializer
+from api.serializers.coloring.coloring_list_serializer import ColoringListSerializer
 from api.serializers.theme.list import ThemeListSerializer
 from api.services.client.list_coloring import PersonalColoringListService
 from api.services.client.list_theme import PersonalThemeListService

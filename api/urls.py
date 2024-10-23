@@ -4,8 +4,9 @@ from api.views.banner import BannerListView
 from api.views.category import CategoryListView
 from api.views.client_theme_coloring import (PersonalThemeListView,
                                              PersonalColoringListView)
-from api.views.coloring import (ColoringListCreateView, ColoringDetailView,
-                                ColoringDownloadView, ColoringAllDetailView)
+from api.views.coloring import (ColoringListCreateView,ColoringDownloadView,
+                                ColoringAllDetailView)
+from api.views.coloring_.views import ColoringDetailView
 from api.views.coloring_like import ColoringLikeCreateDeleteView
 from api.views.user_image_coloring import UserColoringDetailView
 from api.views.saving_image import SavingUserColoringView

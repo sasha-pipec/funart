@@ -8,12 +8,12 @@ from api.docs.coloring import (
     COLORING_LIST_VIEW, COLORING_GET_VIEW,
     COLORING_DOWNLOAD_VIEW, COLORING_CREATE_VIEW
 )
-from api.serializers.coloring.list import ColoringListSerializer, ColoringDetailSerializer
+from api.serializers.coloring.coloring_list_serializer import ColoringListSerializer, ColoringDetailSerializer
 from api.serializers.theme.list import ThemeListSerializer
 from api.services.coloring.all_list import ColoringAllListService
 from api.services.coloring.create import ColoringCreateService
 from api.services.coloring.download import ColoringDownloadService
-from api.services.coloring.get import ColoringGetService
+from api.services.coloring.coloring_get_service import ColoringGetService
 from api.services.coloring.list import ColoringListService
 
 
